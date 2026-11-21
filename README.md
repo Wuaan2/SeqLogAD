@@ -6,15 +6,16 @@ A research project testing **whether knowledge transfers across heterogeneous lo
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![Plan](https://img.shields.io/badge/plan-Bang__ke__hoach__SeqLogAD.xlsx-informational)
-![Phase](https://img.shields.io/badge/phase-P1%20complete-success)
+![Phase](https://img.shields.io/badge/phase-P2.6%20complete-success)
 ![Gate](https://img.shields.io/badge/G0-PASSED%20%C2%B7%20signed%202026--09--06-success)
-![Results](https://img.shields.io/badge/scientific%20results-NOT__RUN-lightgrey)
+![G2](https://img.shields.io/badge/G2-PARTIAL%20%C2%B7%20signed%202026--11--22-yellow)
+![Results](https://img.shields.io/badge/target%20results-NOT__EVALUATED-lightgrey)
 ![Type](https://img.shields.io/badge/type-research%20prototype-8A2BE2)
 
 </div>
 
 > [!IMPORTANT]
-> The authoritative scientific plan is **`Bang_ke_hoach_SeqLogAD.xlsx`**. Phase 1 is complete and G0 passed. P2.PRE is PASS. `NEXT_AUTHORIZED_TASK = P2.1`: implementation and BGL pilot closeout are PASS; its final protocol is frozen, but final Colab training is NOT_STARTED and the scientific result is NOT_EVALUATED. P2.2 remains blocked. G1–G4 remain closed.
+> The authoritative scientific plan is **`Bang_ke_hoach_SeqLogAD.xlsx`**. Phase 1 is complete and G0 passed. Phase 2 development (seed 42) is complete through P2.6: the four experts P2.1–P2.4 are trained, the common evidence contract P2.5 holds for all of them, and the diversity study P2.6 led the researcher to sign **G2 = PARTIAL** (2026-11-22). Under EXC-007 only HDFS and BGL are target folds. No target result exists yet; P2.7 (Phase-2 freeze) is next. The workbook registry still records `NEXT_AUTHORIZED_TASK = P2.1`, because P2.2–P2.6 ran under the seed-42 development amendment ([`phase2-development-s42-v1.yaml`](configs/protocols/phase2-development-s42-v1.yaml)); the workbook is updated at the P2.7 freeze.
 
 ## The question
 
@@ -65,11 +66,12 @@ Four log-producing systems, 16,525,722 records, all from Loghub
 | --- | --- | --- | ---: | --- |
 | `ARCH-HDFS` | HDFS v1 | distributed storage | 11,175,629 | source + target |
 | `ARCH-BGL` | Blue Gene/L | HPC supercomputer | 4,747,963 | source + target |
-| `ARCH-HADOOP` | Hadoop YARN / MapReduce | batch compute | 394,310 | source + target |
+| `ARCH-HADOOP` | Hadoop YARN / MapReduce | batch compute | 394,310 | source only (EXC-007) |
 | `ARCH-OPENSTACK` | OpenStack Nova | cloud IaaS control plane | 207,820 | source only |
 
-Three leave-one-architecture-out folds, each with three source architectures.
-OpenStack is source-only because the only label-blind ordering of its three capture
+Two target folds (HDFS and BGL), each with the other three architectures as sources.
+Hadoop became source-only under EXC-007 (2026-11-20): its burn-in buffer was rejected and its
+public labels are unreliable (loghub issue #56). OpenStack is source-only because the only label-blind ordering of its three capture
 sessions places every anomaly before both normal captures — the reasoning is in
 [P1.1](docs/protocol/P1.1-research-scope.md).
 
@@ -86,6 +88,26 @@ enforced structurally, not by convention:
 - no adaptation-path module imports it — audit check `L09` re-derives this from the
   import graph on every run, and a test asserts it.
 
+Public **source** labels (HDFS blocks, BGL lines; never the target's) are used only for checkpoint
+selection ([P3.1 amendment](docs/protocol/P3.1-source-labeled-development-amendment-2026-09-27.md))
+and the P2.6 diversity evidence ([C2 amendment](docs/protocol/C2-source-label-scope-amendment-2026-11-22.md)),
+on windows held out from training. Reports name this "label-free source training with labeled source development".
+
+## Phase 2 — Experts (development, seed 42)
+
+Each expert trains on Colab from the notebook in [`colab/`](colab/) and writes a verified FINAL ZIP to Google Drive.
+
+| Task | Expert | Design | Contract |
+| --- | --- | --- | --- |
+| P2.1 | Semantic | Llama-3.1-8B + LoRA, reconstruction NLL of one log line | [`semantic-v1`](configs/models/semantic-v1.yaml) |
+| P2.2 | Sequence reference | Llama-3.1-8B + LoRA, next-log NLL from ≤8 predecessors | [`sequence-reference-v13r1`](configs/models/sequence-reference-v13r1.yaml) |
+| P2.3 | Sequence lightweight | 37M-parameter Transformer from scratch, same task as P2.2 | [P2.3 design](docs/protocol/P2.3-lightweight-sequence-expert.md) |
+| P2.4 | GTAT structural/temporal | Two-stream graph topology attention over ≤64 causal records; masked-target Δt, recurrence and event NLL | [P2.4 design](docs/protocol/P2.4-gtat-structural-temporal-expert.md) |
+| P2.5 | — | Common evidence envelope EVID-CS-001 and converters | [P2.5 contract](docs/protocol/P2.5-common-evidence-contract.md) |
+| P2.6 | — | Expert diversity on held-out source validation windows | [preregistration](docs/protocol/P2.6-expert-diversity-preregistration.md) · [report](docs/reports/DIV-P2-001.md) · [G2 record](configs/protocols/g2-signature.yaml) |
+
+P2.6 summary: P2.3 matches P2.2 at 0.46% of its parameters ([comparison](docs/reports/P2.3-vs-P2.2-sequence-comparison.md)). In the HDFS fold, combining P2.3 or P2.4 with P2.2 raised AP; in the BGL fold no expert added evidence. The P2.4 gain is not robust to duplicated log lines ([review](docs/reports/DIV-P2-001-review.md)). G2 is therefore PARTIAL: learned fusion stays closed and equal-weight fusion remains the comparator.
+
 ## Reproduce
 
 ```bash
@@ -94,6 +116,8 @@ python scripts/build_streams.py           # scan raw corpora  (~11 min)
 python scripts/build_protocol.py          # registry, folds, buffers, audits, G0
 python -m pytest -q
 ```
+
+Phase 2 runs on Colab: follow the `README.md` in each folder of [`colab/`](colab/).
 
 ---
 
@@ -212,10 +236,9 @@ The statistical method family and practical margins are frozen before experiment
 | Baselines/models/localization/fusion | **Not implemented or fitted** |
 | RAG/Agent/API/UI | **Future placeholders only** |
 
-The v2 forward model stack and target-adaptation workflow are planned only:
-Llama-3.1-8B with independent LoRA-Semantic/LoRA-Sequence adapters, GTAT,
-unlabeled target-buffer calibration and adaptive fusion. No v2 model,
-checkpoint, target fold or metric exists.
+The v2 experts (Llama-3.1-8B LoRA-Semantic/LoRA-Sequence, a lightweight sequence model and GTAT) are
+trained for development (see Phase 2 above). Target-buffer calibration, adaptive fusion and every target
+metric are not run yet.
 
 `PURGE-DECISION-001` is **FROZEN — HUMAN APPROVED**. The original HDFS split
 remains primary, while a separate non-confirmatory purge-sensitivity analysis
@@ -258,7 +281,7 @@ The forward source of truth is [Protocol v2](docs/research-protocol-v2-domain-ad
 ## Quick start: verify the implemented foundation
 
 ```bash
-git clone https://github.com/Bu0308/SeqLogAD.git
+git clone https://github.com/Wuaan2/SeqLogAD.git
 cd SeqLogAD
 python3.12 -m venv .venv
 source .venv/bin/activate
@@ -314,9 +337,11 @@ configs/          Dataset and protocol contracts; future configs clearly gated
 data/manifests/   Version-controlled identities of accepted raw bytes
 docs/             Active protocol, RQs, dataset cards, literature, citations
 Plan/             Version-controlled v2 plan, migration record, and historical v1.1/ADR records
-src/seqlogad/     Installable package; data foundation/schemas implemented
-tests/            Active foundation/schema/protocol tests plus labeled placeholders
-outputs/          Ignored experiment-specific artifacts
+src/seqlogad/     Installable package: Phase-1 protocol, experts (semantic, sequence, graph),
+                  evidence contract, diversity analysis, Colab runner
+colab/           Colab notebooks, READMEs and verified upload ZIPs for P2.1–P2.6
+scripts/         Build, packaging, graph-view, evidence and diversity scripts
+tests/           Foundation, protocol, expert, evidence and diversity tests
 ```
 
 ## Key documents
