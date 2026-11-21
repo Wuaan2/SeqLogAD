@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets
+.env
+*.token
+
+# Local data and generated artifacts (raw logs come from Zenodo 10.5281/zenodo.8196385)
+data/raw/**
+!data/raw/
+!data/raw/README.md
+!data/raw/*/
+!data/raw/*/.gitkeep
+data/parsed/**
+!data/parsed/README.md
+data/processed/**
+!data/processed/README.md
+data/knowledge_base/**
+!data/knowledge_base/README.md
+outputs/
+research_records/
+
+# Model weights and run outputs never go to Git
+*.safetensors
+*.pt
+checkpoints/
+seqlogad_outputs*/
