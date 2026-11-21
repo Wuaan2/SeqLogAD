@@ -1,0 +1,18 @@
+# G2 (EXPERT_DIVERSITY) decision. Signed by the researcher in the project chat on 2026-11-22;
+# recorded here by the coding agent, which does not sign gates itself.
+g2_signature:
+  gate: G2
+  decision: PARTIAL
+  signed_by: RESEARCHER
+  signed_on: '2026-11-22'
+  basis:
+    preregistration: configs/protocols/p2.6-diversity-v1.yaml
+    label_scope: configs/protocols/c2-source-label-scope-v1.yaml
+    report: {path: docs/reports/DIV-P2-001.md, sha256: 3315c116591a00ae691fbaaac1d1f870df3439d4290612e18cab3b4eddb7c061}
+    report_data: {path: docs/reports/DIV-P2-001.json, sha256: 7af1b8bf5e328e14e8ddb1bc83c3fa6a39d01d2d791462d9b0b72aa6fc8e96db}
+    post_hoc_review: {path: docs/reports/DIV-P2-001-review.md, sha256: 7eb81d5518120b5c3d5951e3dae05ec8043bbecf58169c5437e4d9b378056ca5}
+    evidence_zip_sha256: 61f2a1cab0db93dd280b3ba8def67e735fa0c35815947abe4172a0684d468850
+  summary:
+    FOLD-TARGET-ARCH-HDFS: SEQUENCE_LIGHTWEIGHT and GTAT_STRUCTURAL_TEMPORAL ADDS_EVIDENCE over SEQUENCE_LLAMA_REFERENCE (GTAT not robust to message clustering)
+    FOLD-TARGET-ARCH-BGL: no expert adds evidence over SEQUENCE_LLAMA_REFERENCE (20 positive HDFS blocks)
+  meaning: G2 is not PASSED. Learned fusion that requires G2 stays closed; equal-weight fusion remains the mandatory comparator.
