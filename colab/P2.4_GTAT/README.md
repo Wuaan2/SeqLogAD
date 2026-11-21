@@ -16,7 +16,7 @@ The model is a two-stream graph topology attention network (core idea from GTAT,
 | File | Role | SHA-256 |
 |---|---|---|
 | `P2.4_GTAT.ipynb` | Colab notebook | — |
-| `uploads/seqlogad-code-s42-p2.4-hdfs-bgl-v1.zip` | Code, built from `../Ma_nguon/SeqLogAD` commit `997a7fc` | `cb2e0741dc6d1b701b113f7e1beb698ecf8dd02e25ccec1d603973c920210758` |
+| `uploads/seqlogad-code-s42-p2.4-hdfs-bgl-v1.zip` | Code (built from commit `997a7fc` of the earlier repository) | `cb2e0741dc6d1b701b113f7e1beb698ecf8dd02e25ccec1d603973c920210758` |
 | `uploads/phase2-graph-s42.zip` | Graph view (22.8 MB), built locally from the P2.1/P2.2 bundles and raw logs | `595b5dc7ec1b96abc80b4722b5f39dcf1c5653ec25aefebcce7ee74dbf36f9ac` |
 | ↳ `phase2_graph/manifests/graph-bundle.json` | Graph view manifest | `8918172b4376fd822ec812e9b46b2725f83b517a43c94f3efe16f55623c9d059` |
 | `../P2.2_Sequence/uploads/phase2-sequence-s42.zip` | Sequence data bundle, shared with P2.2 | `4ed76b92e4b001138b28b4b3b4d3017d6ff7f30dd31e8cca0649bfdf34ede781` |
@@ -24,11 +24,7 @@ The model is a two-stream graph topology attention network (core idea from GTAT,
 
 The graph view manifest binds the semantic and sequence bundles, the fold memberships, every raw file, the normalizer and the builder code. The recorded `prepare.py` and `contracts.py` hashes equal the files in commit `997a7fc`. Every node's message was checked byte for byte against the bundled normalized message.
 
-Rebuild the code ZIP (reproducible, same hash):
-
-```powershell
-python ..\Ma_nguon\SeqLogAD\scripts\package_colab_s42.py out.zip
-```
+The git history of the earlier repository is no longer available, so verify every ZIP by its SHA-256; the notebook refuses any other file.
 
 Rebuild the graph view (about 30 minutes on a local CPU; the example in `scripts/build_graph_view.py` shows the arguments).
 

@@ -16,30 +16,33 @@ Everything else is inherited unchanged from P2.2 V13R1: the Llama-3.1 tokenizer,
 | File | Role | SHA-256 |
 |---|---|---|
 | `P2.3_Lightweight.ipynb` | Colab notebook | — |
-| `seqlogad-code-s42-p2.3-hdfs-bgl-v1.zip` | Code, built from `../Ma_nguon/SeqLogAD` commit `9ad5285` | `4aa643397864922455295e701dd484129ff08083e7731689aaf193024e4eb515` |
-| `../P2.2_Sequence/phase2-sequence-s42.zip` | Sequence data bundle, shared with P2.2 | `4ed76b92e4b001138b28b4b3b4d3017d6ff7f30dd31e8cca0649bfdf34ede781` |
-| `../P2.2_Sequence/phase2-source-development-v13r1.zip` | Source-validation label sidecar, shared with P2.2 | `c765eb88a4feebc8ceb157110e5a6bd28dec942a7fb9343d7f6b969b3e79b295` |
+| `uploads/seqlogad-code-s42-p2.3-hdfs-bgl-v1.zip` | Code (built from commit `9ad5285` of the earlier repository) | `4aa643397864922455295e701dd484129ff08083e7731689aaf193024e4eb515` |
+| `../P2.2_Sequence/uploads/phase2-sequence-s42.zip` | Sequence data bundle, shared with P2.2 | `4ed76b92e4b001138b28b4b3b4d3017d6ff7f30dd31e8cca0649bfdf34ede781` |
+| `../P2.2_Sequence/uploads/phase2-source-development-v13r1.zip` | Source-validation label sidecar, shared with P2.2 | `c765eb88a4feebc8ceb157110e5a6bd28dec942a7fb9343d7f6b969b3e79b295` |
 
-Rebuild the code ZIP (reproducible, same hash):
-
-```powershell
-python ..\Ma_nguon\SeqLogAD\scripts\package_colab_s42.py out.zip
-```
+The git history of the earlier repository is no longer available, so verify every ZIP by its SHA-256; the notebook refuses any other file.
 
 ## Running on Colab
 
-1. Upload `seqlogad-code-s42-p2.3-hdfs-bgl-v1.zip` to `MyDrive/SeqLogAD/P2.3_Lightweight/uploads/`. The notebook reads the two data ZIPs from `MyDrive/SeqLogAD/P2.2_Sequence/uploads/`, which already holds them.
+1. Upload `uploads/seqlogad-code-s42-p2.3-hdfs-bgl-v1.zip` to `MyDrive/SeqLogAD/P2.3_Lightweight/uploads/`. The notebook reads the two data ZIPs from `MyDrive/SeqLogAD/P2.2_Sequence/uploads/`, which already holds them.
 2. Keep `HF_TOKEN` in Colab Secrets. It is needed only for the gated Llama-3.1 tokenizer; the 8B weights are not downloaded.
 3. Pick a GPU with native BF16 (L4, A100, H100 or G4; not T4).
 4. Open `P2.3_Lightweight.ipynb` and choose **Run all**. BGL trains first, then HDFS. If Colab disconnects, run the notebook again to resume from the last checkpoint on Drive.
    A P2.3 recovery backup holds the full weights and optimizer state (about 0.9 GB), so it is copied to Drive at most every 30 minutes instead of every 100 steps. A disconnect loses at most about 30 minutes of training. A finished fold is always kept.
 5. Wait for `SAFE_TO_DISCONNECT_COLAB=YES`.
 
-Run time on a GPU has not been measured yet.
+## Result (seed 42, NVIDIA L4)
+
+| Fold | Best / last step | Source-development macro F1 | AUROC | AP | Runtime | Peak VRAM allocated |
+|---|---|---:|---:|---:|---:|---:|
+| BGL (HDFS blocks) | 300 / 600 | 0.152 | 0.787 | 0.069 | 1,898 s | 1.5 GB |
+| HDFS (BGL lines) | 500 / 800 | 0.293 | 0.860 | 0.133 | 2,701 s | 1.5 GB |
+
+Validation took about 0.15 s per window. Comparison with P2.2: `docs/reports/P2.3-vs-P2.2-sequence-comparison.md`.
 
 ## Output
 
-`MyDrive/SeqLogAD/P2.3_Lightweight/P2.3/seqlogad_outputs_P2.3_S42_FINAL.zip` (with a `.sha256` file):
+`MyDrive/SeqLogAD/P2.3_Lightweight/P2.3/seqlogad_outputs_P2.3_S42_FINAL.zip` (with a `.sha256` file), SHA-256 `eb8fe68141fde1f32516b6330b108d9965c4d7d9d130736912663ef52a68e2c4`:
 
 ```
 P2.3_S42/SUMMARY.json

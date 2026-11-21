@@ -4,7 +4,7 @@ P2.6 asks whether each expert adds anomaly evidence beyond the best single exper
 
 The work has three steps:
 
-1. **Scoring (label-free).** Each expert's selected checkpoint scores the evaluation windows and writes one EVID-CS-001 envelope per line. P2.4 was scored locally on CPU (`evidence/` here). P2.1, P2.2 and P2.3 need a GPU, so they run in `P2.6_Scoring.ipynb` on Colab.
+1. **Scoring (label-free).** Each expert's selected checkpoint scores the evaluation windows and writes one EVID-CS-001 envelope per line. P2.4 was scored locally on CPU. P2.1, P2.2 and P2.3 need a GPU, so they run in `P2.6_Scoring.ipynb` on Colab.
 2. **Comparators (label-free, CPU).** Four cheap baselines: rarity, count vector, isolation forest and n-gram Markov.
 3. **Analysis (CPU, uses labels).** AP, AUROC, FAR, double-fault, equal-weight combinations, bootstrap intervals and the recommended G2 verdict. The researcher signs G2.
 
@@ -20,8 +20,7 @@ Before scoring, every expert must reproduce the score in its own `sanity-evidenc
 | File | Role | SHA-256 |
 |---|---|---|
 | `P2.6_Scoring.ipynb` | Colab scoring notebook for P2.1–P2.3 | — |
-| `uploads/seqlogad-code-s42-p2.6-scoring-v2.zip` | Code, commit `f286358` (v2: P2.1 checkpoint loader fix) | `9a429cc53096ab6c11446c7c3743b71c6b2eb5c62a89e82d81801748c98ab172` |
-| `evidence/<fold_id>/GTAT_STRUCTURAL_TEMPORAL.jsonl` | P2.4 evidence (local CPU) and its `.receipt.json` | in each receipt |
+| `uploads/seqlogad-code-s42-p2.6-scoring-v2.zip` | Code (commit `f286358` of the earlier repository; v2 fixes the P2.1 checkpoint loader) | `9a429cc53096ab6c11446c7c3743b71c6b2eb5c62a89e82d81801748c98ab172` |
 
 ## Running the scoring notebook on Colab
 
