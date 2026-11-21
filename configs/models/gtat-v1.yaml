@@ -1,0 +1,123 @@
+# P2.4 GTAT structural/temporal expert (preregistered before any run; see implementation_contract).
+# graph_view freezes the data the builder materialises; every other section freezes the trainer.
+gtat:
+  id: GTAT-ST-001
+  version: '1.0'
+  expert_id: GTAT_STRUCTURAL_TEMPORAL
+  role: STRUCTURAL_TEMPORAL
+  implementation_contract: docs/protocol/P2.4-gtat-structural-temporal-expert.md
+  run_mode: development
+  seed: 42
+  target_folds:
+    - FOLD-TARGET-ARCH-BGL
+    - FOLD-TARGET-ARCH-HDFS
+  model_identity:
+    core: GTAT_GRAPH_TOPOLOGY_ATTENTION
+    core_reference: Shen et al., Scientific Reports 2025, doi:10.1038/s41598-025-88993-3
+    core_elements: [NODE_FEATURE_STREAM, TOPOLOGY_FEATURE_STREAM, CROSS_ATTENTION_BETWEEN_STREAMS]
+    seqlogad_modifications:
+      - TYPED_DIRECTED_EDGES_WITH_LEARNED_PER_HEAD_BIAS
+      - QUANTISED_DELTA_TIME_AND_AGE_ENCODING
+      - HETEROGENEOUS_ATTRIBUTE_NODES
+      - MASKED_TARGET_TEMPORAL_STRUCTURAL_EVENT_OBJECTIVE
+      - HASHED_TEXT_FEATURES_NO_ID_EMBEDDINGS
+    related_sources_not_reproduced: [L1_LOGS2GRAPHS, L7_LOGGT]
+    pretrained_weights: false
+  unit:
+    anchor: P2.2_SEQUENCE_WINDOW  # window_id = sha256(architecture|partition|target_rank)[:24]
+    sequence_bundle_manifest_sha256: 1268b669a8b1b474658cfa7daa6556c987b0f31f07e0101ed30af250a8d7f129
+    source_development_manifest_sha256: 885b53821671e7f60e6df5270a78a23535900bf4ba6d339e69b29f93eb2c6399
+  graph_view:
+    schema_version: SEQLOGAD-GRAPH-VIEW-1
+    membership_source: SEMANTIC_BUNDLE_FULL_SOURCE_PARTITIONS
+    field_source: P1_ADAPTERS_ON_RAW_LOGS_JOINED_BY_RANK
+    lineage_check: EXACT_NORMALIZED_MESSAGE_EQUALITY_FOR_EVERY_NODE
+    windows: ALL_P2.2_SEQUENCE_WINDOWS_OF_THE_FOLD  # train and val, every source of the fold
+    max_context_records: 64
+    min_context_records: 1
+    grouping: SAME_AS_P2.2  # HDFS block, Hadoop application, OpenStack instance else GLOBAL, BGL GLOBAL
+    causal: true  # context ranks < target_rank only
+    reset_boundaries: [ARCHITECTURE, PARTITION, GROUP]
+    global_group_gap_cut_seconds: 3600  # GLOBAL groups only; stop at the first longer gap
+    hadoop_continuation: FOLD_CONTEXT_CONTINUATION_LINES_INTO_PARENT_KEEP_TARGET
+    severity_map:
+      INFO: 0
+      WARN: 1
+      WARNING: 1
+      ERROR: 2
+      SEVERE: 2
+      FATAL: 3
+      CRITICAL: 3
+      FAILURE: 3
+    severity_unknown: -1
+    component_text: LOWERCASE_WORDS_SPLIT_ON_DOT_DOLLAR_UNDERSCORE_CAMELCASE_DIGITS_AND_HOSTS_REMOVED
+    location: BGL_NODE_ID_MIDPLANE_PREFIX  # R##-M#; grouping key, never a feature value
+    request_group: OPENSTACK_TRACE_ID_HASHED  # grouping key, never a feature value
+    forbidden_columns: [session_id, trace_id, node_id, source_file, logfile, label, anomaly]
+  features:
+    hash: BLAKE2B_64_KEYED_GTAT_ST_001
+    token_pattern: '[a-z]+'
+    max_tokens_per_text: 32
+    event_hash_buckets: 16384
+    component_hash_buckets: 4096
+    event_class_buckets: 4096  # content target = blake2b(normalized_message) mod buckets
+    time_quantum_seconds: 1
+    time_clip_seconds: 3600
+    time_buckets: [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 3600]  # lower bounds
+    recurrence_buckets: [0, 1, 2, 3, 5, 9]
+    degree_buckets: [0, 1, 2, 3, 5, 9, 17, 33]
+    request_node_min_members: 2
+  model:
+    hidden_size: 128
+    num_layers: 3
+    num_heads: 4
+    ffn_size: 256
+    dropout: 0.1
+    max_total_parameters: 5000000
+  objective:
+    name: MASKED_TARGET_TEMPORAL_STRUCTURAL_EVENT_NLL
+    target_node_visible_fields: []
+    heads: [temporal_delta_bucket, recurrence_pointer, event_class]
+    head_weights: [1.0, 1.0, 1.0]
+    trimmed_fraction: 0.05  # drop the highest-loss graphs of each batch
+  score:
+    raw: SUM_OF_HEAD_NLL_NATS
+    direction: HIGHER_IS_MORE_ANOMALOUS
+    components: [temporal_nll, structural_nll, content_nll]
+    abstain_score: null
+  training:
+    precision: FP32_TF32_DISABLED
+    optimizer: ADAMW
+    learning_rate: 0.001
+    weight_decay: 0.01
+    warmup_steps: 300
+    max_steps: 6000
+    batch_graphs_per_source: 32
+    max_grad_norm: 1.0
+    source_balancing: EQUAL_GRAPHS_PER_SOURCE_UNIFORM_WITH_REPLACEMENT
+    train_windows: ALL_SCORED_GRAPH_TRAIN_WINDOWS
+    validation_selection: SAME_AS_P2.2_V13R1  # select_windows(val, 512 per source, seed 42)
+    validation_windows_per_source: 512
+    validation_steps: 250
+    checkpoint_selection: MAX_MACRO_SOURCE_DEVELOPMENT_F1
+    abstained_validation_windows: EXCLUDED_FROM_SELECTION_AND_COUNTED
+    tie_breaking: EARLIEST_STEP
+    early_stopping_patience: 6
+    early_stopping_min_delta: 0.0
+    numerical_failure_policy: ABORT_NO_SKIPPED_UPDATES
+  coverage:
+    unit_coverage: CONTEXT_RECORDS_WITH_COMPONENT_AND_KNOWN_SEVERITY_OVER_CONTEXT_RECORDS
+    abstain_when: NO_CONTEXT_RECORD
+    missing_field_policy: ABSENT_NODE_OR_UNKNOWN_TOKEN_NEVER_IMPUTED
+  source_development:
+    permitted_architectures: [ARCH-BGL, ARCH-HDFS]
+    training_labels_allowed: false
+    held_out_target_labels_allowed: false
+  source_label_status: SOURCE_VALIDATION_MODEL_SELECTION_ONLY
+  clean_normal_claim: false
+  satisfies_sequence_role: false
+  required_tests: [ORDER_COLLISION_ABACA_ACABA, CAUSAL_CONTEXT_ONLY, NO_ID_FEATURES, LABEL_FREE_VIEW,
+                   PARAMETER_BUDGET, CHECKPOINT_ROUNDTRIP]
+  planned_ablations: [remove_structural_time, no_severity, no_component_nodes, no_recurrence_edges]
+  resources_reported: [total_parameters, runtime_seconds, peak_vram_allocated, peak_vram_reserved,
+                       validation_seconds_per_window]

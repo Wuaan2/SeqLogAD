@@ -1,0 +1,28 @@
+# Configuration
+
+`pyproject.toml` is the package/dependency contract. The forward machine-readable scientific plan is [`protocols/protocol-v2-domain-adaptive-fusion.yaml`](protocols/protocol-v2-domain-adaptive-fusion.yaml). [`protocols/protocol-v1.1.yaml`](protocols/protocol-v1.1.yaml) plus its addenda remain the frozen HDFS/BGL foundation; `protocol-v1.yaml` is older history.
+
+EFFECT-001 is `FROZEN_HUMAN_APPROVED` with `delta_HDFS = delta_BGL = 0.01 AP` under `RESOURCE_FEASIBILITY_MARGIN`. The statistical addendum is complete and contract-tested. Experiment placeholders remain non-runnable until their independent split/parser/evaluation dependencies are implemented and authorized.
+
+PROTOCOL-SPLIT-CLARIFY-001 is `FROZEN_HUMAN_APPROVED`. SPLIT-001 instantiated it for both datasets; the config records the real payload/TEST hashes and `SEALED_NEVER_OPENED`.
+
+PURGE-DECISION-001 is `FROZEN_HUMAN_APPROVED`. The existing HDFS split/parser/TEST/EFFECT identities remain unchanged; `HDFS-PURGE-SENSITIVITY-001` is secondary, robustness-only, non-selection, and `NOT_RUN`.
+
+[`parsing/drain3-v1.yaml`](parsing/drain3-v1.yaml) is the pre-fit PARSE-001 contract. It freezes Drain3 0.9.11 parameters, masks, message normalization, normal-selection granularity, frozen-match behavior, `EVT_UNSEEN`, identities, and non-overwrite persistence. The real HDFS/BGL states were fitted under this contract; it does not authorize canonical-event generation or scientific experiments.
+
+Model/experiment/retrieval/agent YAML files are non-runnable placeholders. Their statuses distinguish `MUST`, `SHOULD`, `CONDITIONAL`, `FUTURE`, and `REMOVED_FROM_CORE`; the presence of a file does not mean implementation exists. The v2 model/experiment contracts are `models/domain_adaptive_fusion.yaml` and `experiments/cross_architecture_fusion.yaml`.
+
+The v2 observation contract is [`collection/v2.yaml`](collection/v2.yaml); its
+append-only JSONL implementation is documented in
+[`../docs/data-collection-system.md`](../docs/data-collection-system.md).
+
+Rules:
+
+- no secrets or private absolute paths;
+- raw chronological split precedes fitted transforms/windows;
+- no TEST fitting, selection, thresholding, calibration, or architecture/claim choice;
+- every run references exact protocol/config/artifact identities;
+- Transformer/localization/fusion require recorded gates;
+- future downstream placeholders cannot activate dependencies or scope.
+
+See [`../docs/config-convention.md`](../docs/config-convention.md).

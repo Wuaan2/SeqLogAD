@@ -1,0 +1,24 @@
+# C2 resolution (researcher decision 2026-11-22, option A). See the amendment document.
+c2_source_label_scope:
+  id: C2-SOURCE-LABEL-SCOPE-001
+  version: '1.0'
+  document: docs/protocol/C2-source-label-scope-amendment-2026-11-22.md
+  decided_by: RESEARCHER
+  decided_on: '2026-11-22'
+  decided_before_p2_6_scoring: true
+  status: RESOLVED_SOURCE_VALIDATION_DEVELOPMENT_AND_DIVERSITY
+  extends: docs/protocol/P3.1-source-labeled-development-amendment-2026-09-27.md
+  permitted_uses: [CHECKPOINT_SELECTION, P2_6_SUPERVISED_SOURCE_DIVERSITY_EVIDENCE]
+  permitted_architectures:
+    ARCH-HDFS: BLOCK_TRACE
+    ARCH-BGL: TARGET_LOG_LINE
+  excluded_architectures:
+    ARCH-HADOOP: LABELS_UNRELIABLE_LOGHUB_56_EXC_007
+    ARCH-OPENSTACK: VALIDATION_LACKS_BOTH_CLASSES_EXC_004
+  partition: SOURCE_VALIDATION
+  label_sidecar_manifest_sha256: 885b53821671e7f60e6df5270a78a23535900bf4ba6d339e69b29f93eb2c6399
+  target_labels_allowed: false
+  labels_in_model_inputs: false
+  retraining_or_reselection_after_p2_6: false
+  p2_6_results_may_tune_p3: false
+  g2_signed_by_agent: false

@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seqlogad"
+version = "0.1.0"
+description = "Research skeleton for sequence-aware log anomaly detection and evidence-grounded investigation."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "drain3>=0.9,<1",
+    "numpy>=2,<3",
+    "polars>=1,<2",
+    "pyarrow>=17,<20",
+    "pydantic>=2,<3",
+    "pyyaml>=6,<7",
+    "scikit-learn>=1.5,<2",
+    "scipy>=1.13,<2",
+]
+
+[project.scripts]
+seqlogad-download-data = "seqlogad.cli.download_data:main"
+seqlogad-build-dataset-manifest = "seqlogad.cli.build_dataset_manifest:main"
+seqlogad-verify-dataset = "seqlogad.cli.verify_dataset:main"
+seqlogad-extract-raw-metadata = "seqlogad.cli.extract_raw_metadata:main"
+seqlogad-split-dataset = "seqlogad.cli.split_dataset:main"
+seqlogad-final-test-access = "seqlogad.cli.final_test_access:main"
+seqlogad-fit-parser = "seqlogad.cli.fit_parser:main"
+seqlogad-purge-audit = "seqlogad.cli.purge_audit:main"
+seqlogad-canonical-events = "seqlogad.cli.canonical_events:main"
+seqlogad-collect = "seqlogad.collection.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "packaging>=24,<27",
+    "pytest>=8,<10",
+    "pytest-cov>=5,<6",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["seqlogad*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

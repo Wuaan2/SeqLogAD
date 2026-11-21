@@ -1,0 +1,101 @@
+# Phase 1 researcher signature ledger.
+#
+# This records the exact approval text the researcher supplied. It is an
+# attestation ledger, not a cryptographic signature: its integrity comes from the
+# fact that every `payload_received` below must match, byte for byte, the
+# `expected_payload` declared in the contract it approves. `freeze.py` re-derives
+# that comparison on every build, so a typo or an altered payload turns the G0
+# criteria back to FAIL rather than silently passing.
+#
+# No agent may add, edit or invent an entry here.
+g0_signatures:
+  id: G0-SIGNATURES-001
+  version: "1.0"
+  plan: Bang_ke_hoach_SeqLogAD.xlsx
+  plan_sha256: c33aad3333c0d1b032ad324459392f2e5da4b65eb85603d80c2130dfd174d56b
+  signatory_role: Người nghiên cứu
+  attestation_medium: DIRECT_RESEARCHER_INSTRUCTION_IN_SESSION
+  attestation_note: >-
+    The four payloads below were supplied verbatim by the researcher on 2026-09-06,
+    after the pre-sign audit report that disclosed EXC-001 through EXC-006, the
+    Hadoop buffer rejection, and the correction to the PURGE-AUDIT-001 comparability
+    claim. They are recorded exactly as received.
+  signed_on: "2026-09-06"
+
+  signatures:
+    - task: P1.1
+      approves: Research scope memo, fold diagram and forbidden-field policy
+      artifact: docs/protocol/P1.1-research-scope.md
+      expected_payload_source: docs/protocol/P1.1-research-scope.md
+      payload_received: "APPROVE P1.1 RESEARCH SCOPE — DOMAIN-ADAPTIVE-FUSION-001"
+
+    - task: P1.6
+      approves: >-
+        Target burn-in contract ADAPT-INPUT-001 v1.1, its assumptions, contamination
+        bound, duration, hashes and the BUFFER-REJECT-001 rejection rule
+      artifact: configs/protocols/target-buffer-v1.yaml
+      expected_payload_source: configs/protocols/target-buffer-v1.yaml
+      payload_received: "APPROVE ADAPT-INPUT-001 v1.1 TARGET BURN-IN CONTRACT AND BUFFER-REJECT-001"
+
+    - task: P1.7
+      approves: LEAK-CS-001 exception register, EXC-001 through EXC-006
+      artifact: configs/protocols/leak-cs-001-exceptions.yaml
+      expected_payload_source: configs/protocols/leak-cs-001-exceptions.yaml
+      payload_received: "APPROVE LEAK-CS-001-EXCEPTIONS v1.0 (EXC-001..EXC-006)"
+
+    - task: P1.8/G0
+      approves: G0 Protocol Ready receipt
+      artifact: data/processed/protocol/G0-receipt.json
+      expected_payload_source: src/seqlogad/protocol/freeze.py:RESEARCHER_SIGNATURE_PAYLOAD
+      payload_received: "APPROVE G0 PROTOCOL READY — SeqLogAD Phase 1 (Bang_ke_hoach_SeqLogAD.xlsx)"
+
+  # The plan was amended after signing. Recorded so the signature stays auditable:
+  # the researcher signed a set of scientific requirements, and those bytes are
+  # unchanged. Only status and evidence-link cells moved.
+  plan_amendments:
+    - id: PLAN-AMEND-001
+      date: "2026-09-08"
+      reason: >-
+        Bring the workbook's own bookkeeping into line with reality after G0 was
+        signed, and satisfy the Gates sheet's rule that a passed gate must name its
+        evidence.
+      from_sha256: c33aad3333c0d1b032ad324459392f2e5da4b65eb85603d80c2130dfd174d56b
+      to_sha256: 978a24ffd649e1abfecfc05f2bd7af1793d9875656069e57fb0bd75636be0ba2
+      signed_workbook_archived_at: docs/history/Bang_ke_hoach_SeqLogAD--G0-signed-2026-09-06.xlsx
+      changed_cells:
+        by_researcher:
+          - {cell: "Executive!H9", from: Planned, to: Finished}
+          - {cell: "Roadmap!I5", from: Planned, to: Finished}
+          - {cell: "Task Register!K6", from: Not started, to: Done}    # P1.2
+          - {cell: "Task Register!K7", from: Not started, to: Done}    # P1.3
+          - {cell: "Task Register!K8", from: Not started, to: Done}    # P1.4
+          - {cell: "Task Register!K9", from: Not started, to: Done}    # P1.5
+          - {cell: "Task Register!K10", from: Not started, to: Done}   # P1.6
+          - {cell: "Task Register!K11", from: Not started, to: Done}   # P1.7
+          - {cell: "Task Register!K12", from: Not started, to: Done}   # P1.8
+          - {cell: "Gates!G5", from: Not passed, to: Passed}           # G0
+        by_ai_on_researcher_instruction:
+          - {cell: "Executive!H4", from: "PLANNED — no empirical result",
+             to: "P1 COMPLETE — no empirical result"}
+          - {cell: "Gates!H5", from: "—",
+             to: "data/processed/protocol/G0-receipt.json"}
+      scope_of_change: STATUS_AND_EVIDENCE_LINK_CELLS_ONLY
+      scientific_content_changed: false
+      verification: >-
+        Every differing cell lies in a status or evidence-link column
+        (Executive!H, Roadmap!I, Task Register!K, Gates!G, Gates!H). No task text,
+        definition of done, dependency, gate requirement, research question or
+        citation changed. Re-derived from the archived signed workbook by
+        tests/test_excel_plan_authority.py, which fails if any other cell differs.
+      signature_validity: >-
+        UNAFFECTED. The four payloads still match the contracts they approve, and
+        the scientific requirements the researcher signed are byte-identical.
+
+  # What signing does NOT do.
+  scope_limits:
+    - Signing G0 confirms the protocol only. It asserts nothing about model quality.
+    - G1, G2, G3 and G4 remain NOT_PASSED and are unaffected.
+    - EXC-003 still blocks G1 for the ARCH-HADOOP fold; approving the register
+      acknowledges the rejection, it does not lift it.
+    - EXC-001 and EXC-002 remain open scientific caveats for any P4 HDFS claim.
+    - No empirical result is claimed; scientific results remain NOT_RUN.

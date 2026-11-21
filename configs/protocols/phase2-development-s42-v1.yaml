@@ -1,0 +1,76 @@
+phase2_development_s42:
+  id: P2-DEV-S42-ONECLICK-001
+  version: '1.0'
+  authority: USER_REQUEST_2026_09_16
+  status: ACTIVE_EXECUTION_AMENDMENT
+  purpose: DEVELOPMENT_ARCHITECTURE_VALIDATION_NOT_SCIENTIFIC_COMPLETION
+  preserves_historical_protocols: true
+  run_mode: development
+  seed: 42
+  confirmation_seeds_deferred: [3407, 8675309]
+  targets: [BGL, HDFS]  # EXC-007: Hadoop is source-only
+  target_order: [BGL, HDFS]
+  folds:
+    BGL: FOLD-TARGET-ARCH-BGL
+    HDFS: FOLD-TARGET-ARCH-HDFS
+  source_label_status: UNRESOLVED_DENY
+  anomaly_labels_allowed: false
+  target_data_allowed: false
+  execution:
+    targets_sequential_within_notebook: true
+    experts_may_use_separate_colab_runtimes: true
+    cross_expert_checkpoint_reuse: false
+    persistent_root: /content/drive/MyDrive/SeqLogAD
+    active_root: /content
+    skip_completed_verified: true
+    resume_verified_recovery: true
+    ambiguous_or_corrupt_state: FAIL_CLOSED
+  experts:
+    P2.1:
+      expert_id: SEMANTIC_LLAMA
+      notebook: notebooks/P2.1_run_all_semantic_s42.ipynb
+      implementation_status: READY
+      required_view: semantic
+      requires_hf_token: true
+      final_zip: seqlogad_outputs_P2.1_S42_FINAL.zip
+    P2.2:
+      expert_id: SEQUENCE_LLAMA_REFERENCE
+      notebook: P2.2_Sequence/P2.2_Sequence.ipynb
+      implementation_status: READY
+      required_view: sequence
+      requires_hf_token: true
+      final_zip: seqlogad_outputs_P2.2_S42_FINAL.zip
+      sequence_candidate: v13r1
+      implementation_contract: docs/protocol/P3.1-source-labeled-development-amendment-2026-09-27.md
+      implementation_config: configs/models/sequence-reference-v13r1.yaml
+      objective: CAUSAL_NEXT_LOG_TARGET_TOKEN_NLL
+      context_records: 8
+      blockers: []
+    P2.3:
+      expert_id: SEQUENCE_LIGHTWEIGHT
+      notebook: P2.3_Lightweight/P2.3_Lightweight.ipynb
+      implementation_status: READY
+      required_view: sequence
+      requires_hf_token: true  # gated Llama-3.1 tokenizer only; base weights are never loaded
+      final_zip: seqlogad_outputs_P2.3_S42_FINAL.zip
+      implementation_contract: docs/protocol/P2.3-lightweight-sequence-expert.md
+      implementation_config: configs/models/sequence-lightweight-v1.yaml
+      objective: CAUSAL_NEXT_LOG_TARGET_TOKEN_NLL
+      blockers: []
+    P2.4:
+      expert_id: GTAT_STRUCTURAL_TEMPORAL
+      notebook: P2.4_GTAT/P2.4_GTAT.ipynb
+      implementation_status: READY
+      required_view: graph
+      requires_hf_token: false
+      final_zip: seqlogad_outputs_P2.4_S42_FINAL.zip
+      implementation_contract: docs/protocol/P2.4-gtat-structural-temporal-expert.md
+      implementation_config: configs/models/gtat-v1.yaml
+      objective: MASKED_TARGET_TEMPORAL_STRUCTURAL_EVENT_NLL
+      graph_view_manifest_sha256: 8918172b4376fd822ec812e9b46b2725f83b517a43c94f3efe16f55623c9d059
+      blockers: []
+  completion_claims:
+    multi_seed_stability: FORBIDDEN
+    scientific_result: NOT_EVALUATED
+    p2_6_evaluation: NOT_AUTHORIZED
+    phase3: NOT_AUTHORIZED

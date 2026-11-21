@@ -1,0 +1,67 @@
+# P2.6 expert diversity preregistration (frozen 2026-11-22, before any scoring of the evaluation units).
+p2_6_diversity:
+  id: DIV-P2-001
+  version: '1.0'
+  document: docs/protocol/P2.6-expert-diversity-preregistration.md
+  label_scope: configs/protocols/c2-source-label-scope-v1.yaml
+  evidence_schema: EVID-CS-001
+  seed: 42
+  folds: [FOLD-TARGET-ARCH-BGL, FOLD-TARGET-ARCH-HDFS]
+  experts:
+    SEMANTIC_LLAMA: {task: P2.1, unit_score: TARGET_RECORD_OF_WINDOW}
+    SEQUENCE_LLAMA_REFERENCE: {task: P2.2, unit_score: WINDOW}
+    SEQUENCE_LIGHTWEIGHT: {task: P2.3, unit_score: WINDOW}
+    GTAT_STRUCTURAL_TEMPORAL: {task: P2.4, unit_score: WINDOW}
+  checkpoints: SELECTED_CHECKPOINT_IN_EACH_FINAL_ZIP_UNCHANGED
+  evaluation_set:
+    pool: ALL_SEQUENCE_SOURCE_VALIDATION_WINDOWS_OF_THE_FOLD  # 2048 per source
+    exclude: CHECKPOINT_SELECTION_WINDOWS  # select_windows(val, 512, seed 42), shared by P2.2-P2.4
+    hdfs_block_rule: EXCLUDE_WINDOWS_WHOSE_BLOCK_OCCURS_IN_THE_SELECTION_WINDOWS
+    labeled_units:
+      ARCH-HDFS: BLOCK_TRACE  # unit score = mean of its windows' scores
+      ARCH-BGL: TARGET_LOG_LINE  # unit score = window score
+    unlabeled_sources: LABEL_FREE_DIAGNOSTICS_ONLY  # ARCH-HADOOP, ARCH-OPENSTACK
+    minimum_positive_units: 20  # below this a verdict is INSUFFICIENT_POWER
+  missing_scores: ABSTAIN_EXCLUDED_FROM_THAT_EXPERT_COVERAGE_REPORTED_NEVER_ZERO_FILLED
+  metrics:
+    primary: AVERAGE_PRECISION_NON_INTERPOLATED
+    secondary: [AUROC, FAR_AT_RECALL_0_5, FAR_AT_RECALL_0_8, COVERAGE]
+    alarm_budget_fraction: 0.05  # top 5% of scored units per expert, fold and source
+    pairwise: [SPEARMAN_RHO, DOUBLE_FAULT_RATE_AT_ALARM_BUDGET, DISAGREEMENT_AT_ALARM_BUDGET]
+  combinations:
+    normalisation: MID_RANK_PERCENTILE_WITHIN_FOLD_SOURCE_EXPERT
+    rule: EQUAL_WEIGHT_MEAN_OVER_EXPERTS_THAT_SCORED_THE_UNIT
+    evaluated: [ALL_SINGLES, BEST_SINGLE_PLUS_EACH_OTHER_EXPERT, ALL_FOUR, P2_3_MINUS_P2_2_PAIRED]
+    best_single: MAX_POINT_AP_ON_THE_EVALUATION_SET_PER_FOLD
+    learned_weights: false
+  uncertainty:
+    method: PAIRED_NONPARAMETRIC_BOOTSTRAP_OVER_LABELED_UNITS
+    replicates: 2000
+    interval: PERCENTILE_95
+    seed: 42
+  practical_margin:
+    delta_ap_relative_to_best_single: 0.10
+    rationale: RELATIVE_BECAUSE_BASE_RATES_DIFFER_BY_SOURCE_NOT_INHERITED_FROM_EFFECT_001
+  expert_verdict:
+    ADDS_EVIDENCE: DELTA_AP_AT_LEAST_MARGIN_AND_CI_LOWER_BOUND_ABOVE_ZERO
+    INSUFFICIENT_POWER: FEWER_THAN_MINIMUM_POSITIVE_UNITS
+    NOT_SHOWN: OTHERWISE
+  g2_recommendation:
+    PASS: A_NON_BEST_EXPERT_ADDS_EVIDENCE_IN_BOTH_FOLDS
+    PARTIAL: A_NON_BEST_EXPERT_ADDS_EVIDENCE_IN_ONE_FOLD
+    NOT_SHOWN: OTHERWISE
+    signed_by: RESEARCHER
+  comparators:
+    fit_partition: SOURCE_TRAIN_OF_THE_SAME_SOURCE
+    labels_used_for_fitting: false
+    unseen_rarity: NEGATIVE_LOG_ADD_ONE_FREQUENCY_OF_TARGET_MESSAGE
+    count_vector: WINDOW_UNIGRAM_NLL_UNDER_TRAIN_MESSAGE_FREQUENCIES
+    isolation_forest: {features: HASHED_MESSAGE_COUNTS_OF_WINDOW, buckets: 1024, n_estimators: 200, random_state: 42}
+    ngram_markov: NEGATIVE_LOG_ADD_ONE_BIGRAM_PROBABILITY_OF_TARGET_GIVEN_PREVIOUS_RECORD
+  label_free_diagnostics: [SPEARMAN_RHO, TOP_5_PERCENT_OVERLAP, ABSTAIN_AND_COVERAGE, SYNTHETIC_PROBE_RESPONSES, RESOURCES]
+  synthetic_probes: MECHANISM_DIAGNOSTICS_ONLY_NOT_POPULATION_PERFORMANCE
+  forbidden: [TARGET_LABELS, TARGET_DATA, RETRAINING_OR_RESELECTION, TUNING_P3_FROM_P2_6, AGENT_SIGNS_G2,
+              SEQUENCE_WINNER_FROM_P2_6_ALONE]
+  outputs: [paired EVID-CS-001 predictions per expert and fold, per-expert metric table, pairwise matrices,
+            combination table with intervals, comparator table, resource table, unresolved-label-scope report,
+            null and negative findings]
