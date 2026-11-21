@@ -1,0 +1,884 @@
+{
+  "complete": true,
+  "config_sha256": "25fb5c69353e566e2ddad803795a482892162b8961ac3541978fad06de04c9c3",
+  "experts_analyzed": [
+    "SEMANTIC_LLAMA",
+    "SEQUENCE_LLAMA_REFERENCE",
+    "SEQUENCE_LIGHTWEIGHT",
+    "GTAT_STRUCTURAL_TEMPORAL"
+  ],
+  "folds": {
+    "FOLD-TARGET-ARCH-BGL": {
+      "label_free": {
+        "ARCH-HADOOP": {
+          "coverage": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEMANTIC_LLAMA": {
+              "abstain_windows": 1,
+              "scored_windows": 1535,
+              "unit_coverage": 0.9993489583333334
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "abstain_windows": 1,
+              "scored_windows": 1535,
+              "unit_coverage": 0.9993489583333334
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "abstain_windows": 1,
+              "scored_windows": 1535,
+              "unit_coverage": 0.9993489583333334
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.33693557174416094,
+              "top5_overlap": 0.012987012987012988
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.28816848513690846,
+              "top5_overlap": 0.4155844155844156
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "spearman": 0.2249478156620161,
+              "top5_overlap": 0.22077922077922077
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.5080253498679831,
+              "top5_overlap": 0.025974025974025976
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.29900932256599383,
+              "top5_overlap": 0.45454545454545453
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.5579852752274421,
+              "top5_overlap": 0.45454545454545453
+            }
+          },
+          "units": 1536,
+          "windows": 1536
+        },
+        "ARCH-HDFS": {
+          "coverage": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "abstain_windows": 0,
+              "scored_windows": 1526,
+              "unit_coverage": 1.0
+            },
+            "SEMANTIC_LLAMA": {
+              "abstain_windows": 0,
+              "scored_windows": 1526,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "abstain_windows": 0,
+              "scored_windows": 1526,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "abstain_windows": 0,
+              "scored_windows": 1526,
+              "unit_coverage": 1.0
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.3825297009007274,
+              "top5_overlap": 0.2894736842105263
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.7088721320972899,
+              "top5_overlap": 0.27631578947368424
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "spearman": 0.4738478947237239,
+              "top5_overlap": 0.27631578947368424
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.7412840765593366,
+              "top5_overlap": 0.6578947368421053
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.8881521290593064,
+              "top5_overlap": 0.6973684210526315
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.7895156536245748,
+              "top5_overlap": 0.8289473684210527
+            }
+          },
+          "units": 1509,
+          "windows": 1526
+        },
+        "ARCH-OPENSTACK": {
+          "coverage": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEMANTIC_LLAMA": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.0936939557524211,
+              "top5_overlap": 0.5064935064935064
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.680282028221567,
+              "top5_overlap": 0.5584415584415584
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "spearman": 0.21440219800987603,
+              "top5_overlap": 0.4025974025974026
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": -0.10131084143874326,
+              "top5_overlap": 0.5714285714285714
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.6366016205870426,
+              "top5_overlap": 0.4935064935064935
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.10760335761851467,
+              "top5_overlap": 0.42857142857142855
+            }
+          },
+          "units": 1536,
+          "windows": 1536
+        }
+      },
+      "labeled": {
+        "ARCH-HDFS": {
+          "best_single": "SEQUENCE_LLAMA_REFERENCE",
+          "combinations": {
+            "ALL_FOUR": {
+              "auroc": 0.7314808596373406,
+              "average_precision": 0.06659408701359777,
+              "coverage": 1.0,
+              "delta_ap_vs_best": -0.17010016693351981,
+              "delta_ci": {
+                "lower": -0.31023462471933894,
+                "upper": -0.028408458089198865,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.14237743451981194,
+              "far_at_recall_0.8": 0.4922766957689725,
+              "positives": 20,
+              "units": 1509
+            },
+            "SEQUENCE_LLAMA_REFERENCE+GTAT_STRUCTURAL_TEMPORAL": {
+              "auroc": 0.7356783075889859,
+              "average_precision": 0.07765898416557271,
+              "coverage": 1.0,
+              "delta_ap_vs_best": -0.1590352697815449,
+              "delta_ci": {
+                "lower": -0.29233405274525714,
+                "upper": -0.013432765673513631,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.1155137676292814,
+              "far_at_recall_0.8": 0.5077233042310275,
+              "positives": 20,
+              "units": 1509,
+              "verdict": "NOT_SHOWN"
+            },
+            "SEQUENCE_LLAMA_REFERENCE+SEMANTIC_LLAMA": {
+              "auroc": 0.7164875755540632,
+              "average_precision": 0.056923623946544585,
+              "coverage": 1.0,
+              "delta_ap_vs_best": -0.17977063000057303,
+              "delta_ci": {
+                "lower": -0.3334207153253016,
+                "upper": -0.027988101916953972,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.16118200134318333,
+              "far_at_recall_0.8": 0.5104096709200806,
+              "positives": 20,
+              "units": 1509,
+              "verdict": "NOT_SHOWN"
+            },
+            "SEQUENCE_LLAMA_REFERENCE+SEQUENCE_LIGHTWEIGHT": {
+              "auroc": 0.7223807924781732,
+              "average_precision": 0.23816176314592918,
+              "coverage": 1.0,
+              "delta_ap_vs_best": 0.001467509198811584,
+              "delta_ci": {
+                "lower": -0.005647945828333686,
+                "upper": 0.014380956933498482,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.16118200134318333,
+              "far_at_recall_0.8": 0.5245130960376091,
+              "positives": 20,
+              "units": 1509,
+              "verdict": "NOT_SHOWN"
+            }
+          },
+          "comparators": {
+            "count_vector": {
+              "auroc": 0.6371725990597716,
+              "average_precision": 0.03522686878432836,
+              "far_at_recall_0.5": 0.3539288112827401,
+              "far_at_recall_0.8": 0.6776359973136333,
+              "positives": 20,
+              "units": 1509
+            },
+            "isolation_forest": {
+              "auroc": 0.6352249832102081,
+              "average_precision": 0.030524918779843185,
+              "far_at_recall_0.5": 0.2028206850235057,
+              "far_at_recall_0.8": 0.699798522498321,
+              "positives": 20,
+              "units": 1509
+            },
+            "ngram_markov": {
+              "auroc": 0.7152619207521826,
+              "average_precision": 0.032524290890463436,
+              "far_at_recall_0.5": 0.16252518468770988,
+              "far_at_recall_0.8": 0.513767629281397,
+              "positives": 20,
+              "units": 1509
+            },
+            "unseen_rarity": {
+              "auroc": 0.7287105439892545,
+              "average_precision": 0.036573055911049125,
+              "far_at_recall_0.5": 0.13297515110812627,
+              "far_at_recall_0.8": 0.4768300873069174,
+              "positives": 20,
+              "units": 1509
+            }
+          },
+          "expert_beats_comparator": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "count_vector": true,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": true
+            },
+            "SEMANTIC_LLAMA": {
+              "count_vector": false,
+              "isolation_forest": true,
+              "ngram_markov": false,
+              "unseen_rarity": false
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "count_vector": true,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": true
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "count_vector": true,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": true
+            }
+          },
+          "insufficient_power": false,
+          "p2_3_minus_p2_2": {
+            "delta_ap": -0.006761972491573093,
+            "delta_ci": {
+              "lower": -0.024513746039491423,
+              "upper": 0.003080142463714255,
+              "valid_replicates": 2000
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "disagreement": 0.07157057654075547,
+              "double_fault_rate": 0.6,
+              "spearman": 0.3825297009007274,
+              "units_scored_by_both": 1509
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "disagreement": 0.0728959575878065,
+              "double_fault_rate": 0.65,
+              "spearman": 0.7088721320972899,
+              "units_scored_by_both": 1509
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "disagreement": 0.0728959575878065,
+              "double_fault_rate": 0.6,
+              "spearman": 0.4738478947237239,
+              "units_scored_by_both": 1509
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "disagreement": 0.03445990722332671,
+              "double_fault_rate": 0.6,
+              "spearman": 0.7412840765593366,
+              "units_scored_by_both": 1509
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "disagreement": 0.030483764082173626,
+              "double_fault_rate": 0.6,
+              "spearman": 0.8881521290593064,
+              "units_scored_by_both": 1509
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "disagreement": 0.017229953611663355,
+              "double_fault_rate": 0.65,
+              "spearman": 0.7895156536245748,
+              "units_scored_by_both": 1509
+            }
+          },
+          "positive_units": 20,
+          "singles": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "auroc": 0.7470953660174614,
+              "average_precision": 0.0629787411679302,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.08059100067159167,
+              "far_at_recall_0.8": 0.4137004701141706,
+              "positives": 20,
+              "units": 1509
+            },
+            "SEMANTIC_LLAMA": {
+              "auroc": 0.6713901947615849,
+              "average_precision": 0.03069730356674788,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.22364002686366688,
+              "far_at_recall_0.8": 0.7817327065144393,
+              "positives": 20,
+              "units": 1509
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "auroc": 0.7166890530557422,
+              "average_precision": 0.2299322814555445,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.15580926796507724,
+              "far_at_recall_0.8": 0.5050369375419744,
+              "positives": 20,
+              "units": 1509
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "auroc": 0.7206850235057085,
+              "average_precision": 0.2366942539471176,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.1544660846205507,
+              "far_at_recall_0.8": 0.5413028878441908,
+              "positives": 20,
+              "units": 1509
+            }
+          },
+          "units": 1509,
+          "verdicts": {
+            "GTAT_STRUCTURAL_TEMPORAL": "NOT_SHOWN",
+            "SEMANTIC_LLAMA": "NOT_SHOWN",
+            "SEQUENCE_LIGHTWEIGHT": "NOT_SHOWN",
+            "SEQUENCE_LLAMA_REFERENCE": "BEST_SINGLE"
+          }
+        }
+      }
+    },
+    "FOLD-TARGET-ARCH-HDFS": {
+      "label_free": {
+        "ARCH-BGL": {
+          "coverage": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEMANTIC_LLAMA": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.7865915747081085,
+              "top5_overlap": 0.09090909090909091
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.8034256110907813,
+              "top5_overlap": 0.2857142857142857
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "spearman": 0.6029330370523562,
+              "top5_overlap": 0.03896103896103896
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.7441251526748577,
+              "top5_overlap": 0.11688311688311688
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.6683999864049432,
+              "top5_overlap": 0.15584415584415584
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.6849887677094614,
+              "top5_overlap": 0.1038961038961039
+            }
+          },
+          "units": 1536,
+          "windows": 1536
+        },
+        "ARCH-HADOOP": {
+          "coverage": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEMANTIC_LLAMA": {
+              "abstain_windows": 1,
+              "scored_windows": 1535,
+              "unit_coverage": 0.9993489583333334
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "abstain_windows": 1,
+              "scored_windows": 1535,
+              "unit_coverage": 0.9993489583333334
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "abstain_windows": 1,
+              "scored_windows": 1535,
+              "unit_coverage": 0.9993489583333334
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.2720004398871667,
+              "top5_overlap": 0.0
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.40730293418625413,
+              "top5_overlap": 0.4935064935064935
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "spearman": 0.1359905519002817,
+              "top5_overlap": 0.15584415584415584
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.3787831503911271,
+              "top5_overlap": 0.025974025974025976
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.4502431753706124,
+              "top5_overlap": 0.38961038961038963
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.38049515848902193,
+              "top5_overlap": 0.38961038961038963
+            }
+          },
+          "units": 1536,
+          "windows": 1536
+        },
+        "ARCH-OPENSTACK": {
+          "coverage": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEMANTIC_LLAMA": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "abstain_windows": 0,
+              "scored_windows": 1536,
+              "unit_coverage": 1.0
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.19226567176111642,
+              "top5_overlap": 0.23376623376623376
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.7286670806415554,
+              "top5_overlap": 0.4155844155844156
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "spearman": 0.5396547740652451,
+              "top5_overlap": 0.4675324675324675
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.12875399130760506,
+              "top5_overlap": 0.23376623376623376
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "spearman": 0.19642060387366964,
+              "top5_overlap": 0.18181818181818182
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "spearman": 0.6921892539450194,
+              "top5_overlap": 0.5974025974025974
+            }
+          },
+          "units": 1536,
+          "windows": 1536
+        }
+      },
+      "labeled": {
+        "ARCH-BGL": {
+          "best_single": "SEQUENCE_LLAMA_REFERENCE",
+          "combinations": {
+            "ALL_FOUR": {
+              "auroc": 0.9022433780721986,
+              "average_precision": 0.3598828536642817,
+              "coverage": 1.0,
+              "delta_ap_vs_best": 0.18209657683734565,
+              "delta_ci": {
+                "lower": 0.08143580107210335,
+                "upper": 0.3040586943734839,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.08849557522123894,
+              "far_at_recall_0.8": 0.10006807351940095,
+              "positives": 67,
+              "units": 1536
+            },
+            "SEQUENCE_LLAMA_REFERENCE+GTAT_STRUCTURAL_TEMPORAL": {
+              "auroc": 0.8819838858803328,
+              "average_precision": 0.2605340294378601,
+              "coverage": 1.0,
+              "delta_ap_vs_best": 0.08274775261092404,
+              "delta_ci": {
+                "lower": 0.03634649602103679,
+                "upper": 0.1380870347441311,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.04220558202859088,
+              "far_at_recall_0.8": 0.09734513274336283,
+              "positives": 67,
+              "units": 1536,
+              "verdict": "ADDS_EVIDENCE"
+            },
+            "SEQUENCE_LLAMA_REFERENCE+SEMANTIC_LLAMA": {
+              "auroc": 0.8202655883279315,
+              "average_precision": 0.18623943352876177,
+              "coverage": 1.0,
+              "delta_ap_vs_best": 0.008453156701825726,
+              "delta_ci": {
+                "lower": -0.051691477543549975,
+                "upper": 0.0890530974853001,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.27229407760381213,
+              "far_at_recall_0.8": 0.2838665759019741,
+              "positives": 67,
+              "units": 1536,
+              "verdict": "NOT_SHOWN"
+            },
+            "SEQUENCE_LLAMA_REFERENCE+SEQUENCE_LIGHTWEIGHT": {
+              "auroc": 0.9249108440100383,
+              "average_precision": 0.4166300899708008,
+              "coverage": 1.0,
+              "delta_ap_vs_best": 0.23884381314386477,
+              "delta_ci": {
+                "lower": 0.1468834514616644,
+                "upper": 0.33808566174104754,
+                "valid_replicates": 2000
+              },
+              "far_at_recall_0.5": 0.10823689584751532,
+              "far_at_recall_0.8": 0.10823689584751532,
+              "positives": 67,
+              "units": 1536,
+              "verdict": "ADDS_EVIDENCE"
+            }
+          },
+          "comparators": {
+            "count_vector": {
+              "auroc": 0.8113499893317618,
+              "average_precision": 0.11331477319250553,
+              "far_at_recall_0.5": 0.30428863172226006,
+              "far_at_recall_0.8": 0.30428863172226006,
+              "positives": 67,
+              "units": 1536
+            },
+            "isolation_forest": {
+              "auroc": 0.5274783333163996,
+              "average_precision": 0.06304575689996282,
+              "far_at_recall_0.5": 0.30701157249829814,
+              "far_at_recall_0.8": 0.9012933968686181,
+              "positives": 67,
+              "units": 1536
+            },
+            "ngram_markov": {
+              "auroc": 0.7590756225678957,
+              "average_precision": 0.09354824183849826,
+              "far_at_recall_0.5": 0.39823008849557523,
+              "far_at_recall_0.8": 0.39823008849557523,
+              "positives": 67,
+              "units": 1536
+            },
+            "unseen_rarity": {
+              "auroc": 0.8059396685734026,
+              "average_precision": 0.10779049515438976,
+              "far_at_recall_0.5": 0.3430905377808033,
+              "far_at_recall_0.8": 0.3430905377808033,
+              "positives": 67,
+              "units": 1536
+            }
+          },
+          "expert_beats_comparator": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "count_vector": true,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": true
+            },
+            "SEMANTIC_LLAMA": {
+              "count_vector": false,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": false
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "count_vector": true,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": true
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "count_vector": true,
+              "isolation_forest": true,
+              "ngram_markov": true,
+              "unseen_rarity": true
+            }
+          },
+          "insufficient_power": false,
+          "p2_3_minus_p2_2": {
+            "delta_ap": -0.010701332405795738,
+            "delta_ci": {
+              "lower": -0.06454833188475372,
+              "upper": 0.043581563476068313,
+              "valid_replicates": 2000
+            }
+          },
+          "pairs": {
+            "SEMANTIC_LLAMA|GTAT_STRUCTURAL_TEMPORAL": {
+              "disagreement": 0.09114583333333333,
+              "double_fault_rate": 0.7761194029850746,
+              "spearman": 0.7865915747081085,
+              "units_scored_by_both": 1536
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LIGHTWEIGHT": {
+              "disagreement": 0.07161458333333333,
+              "double_fault_rate": 0.6567164179104478,
+              "spearman": 0.8034256110907813,
+              "units_scored_by_both": 1536
+            },
+            "SEMANTIC_LLAMA|SEQUENCE_LLAMA_REFERENCE": {
+              "disagreement": 0.09635416666666667,
+              "double_fault_rate": 0.7313432835820896,
+              "spearman": 0.6029330370523562,
+              "units_scored_by_both": 1536
+            },
+            "SEQUENCE_LIGHTWEIGHT|GTAT_STRUCTURAL_TEMPORAL": {
+              "disagreement": 0.08854166666666667,
+              "double_fault_rate": 0.582089552238806,
+              "spearman": 0.7441251526748577,
+              "units_scored_by_both": 1536
+            },
+            "SEQUENCE_LLAMA_REFERENCE|GTAT_STRUCTURAL_TEMPORAL": {
+              "disagreement": 0.08463541666666667,
+              "double_fault_rate": 0.6716417910447762,
+              "spearman": 0.6683999864049432,
+              "units_scored_by_both": 1536
+            },
+            "SEQUENCE_LLAMA_REFERENCE|SEQUENCE_LIGHTWEIGHT": {
+              "disagreement": 0.08984375,
+              "double_fault_rate": 0.6119402985074627,
+              "spearman": 0.6849887677094614,
+              "units_scored_by_both": 1536
+            }
+          },
+          "positive_units": 67,
+          "singles": {
+            "GTAT_STRUCTURAL_TEMPORAL": {
+              "auroc": 0.801377726750861,
+              "average_precision": 0.14413046656488418,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.12321307011572498,
+              "far_at_recall_0.8": 0.3655547991831178,
+              "positives": 67,
+              "units": 1536
+            },
+            "SEMANTIC_LLAMA": {
+              "auroc": 0.6751775499629151,
+              "average_precision": 0.1061802707896817,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.4254594962559564,
+              "far_at_recall_0.8": 0.4758339006126617,
+              "positives": 67,
+              "units": 1536
+            },
+            "SEQUENCE_LIGHTWEIGHT": {
+              "auroc": 0.8502890584517846,
+              "average_precision": 0.1670849444211403,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.13614703880190607,
+              "far_at_recall_0.8": 0.2532334921715453,
+              "positives": 67,
+              "units": 1536
+            },
+            "SEQUENCE_LLAMA_REFERENCE": {
+              "auroc": 0.8770714162340103,
+              "average_precision": 0.17778627682693604,
+              "coverage": 1.0,
+              "far_at_recall_0.5": 0.10415248468345814,
+              "far_at_recall_0.8": 0.15997277059223963,
+              "positives": 67,
+              "units": 1536
+            }
+          },
+          "units": 1536,
+          "verdicts": {
+            "GTAT_STRUCTURAL_TEMPORAL": "ADDS_EVIDENCE",
+            "SEMANTIC_LLAMA": "NOT_SHOWN",
+            "SEQUENCE_LIGHTWEIGHT": "ADDS_EVIDENCE",
+            "SEQUENCE_LLAMA_REFERENCE": "BEST_SINGLE"
+          }
+        }
+      }
+    }
+  },
+  "g2_recommendation": {
+    "per_fold_verdicts": {
+      "FOLD-TARGET-ARCH-BGL": {
+        "GTAT_STRUCTURAL_TEMPORAL": "NOT_SHOWN",
+        "SEMANTIC_LLAMA": "NOT_SHOWN",
+        "SEQUENCE_LIGHTWEIGHT": "NOT_SHOWN",
+        "SEQUENCE_LLAMA_REFERENCE": "BEST_SINGLE"
+      },
+      "FOLD-TARGET-ARCH-HDFS": {
+        "GTAT_STRUCTURAL_TEMPORAL": "ADDS_EVIDENCE",
+        "SEMANTIC_LLAMA": "NOT_SHOWN",
+        "SEQUENCE_LIGHTWEIGHT": "ADDS_EVIDENCE",
+        "SEQUENCE_LLAMA_REFERENCE": "BEST_SINGLE"
+      }
+    },
+    "signed_by": "RESEARCHER",
+    "status": "RECOMMENDED_NOT_SIGNED",
+    "verdict": "PARTIAL"
+  },
+  "id": "DIV-P2-001",
+  "inputs": {
+    "FOLD-TARGET-ARCH-BGL": {
+      "GTAT_STRUCTURAL_TEMPORAL": {
+        "VALID": 4598,
+        "envelopes": 4598,
+        "sha256": "65ac0db464c2d9d772e79ca4cc91d253b126745dded5a32959c2f1437f8835e9",
+        "unmatched_envelopes": 0
+      },
+      "SEMANTIC_LLAMA": {
+        "ABSTAIN": 1,
+        "VALID": 4597,
+        "envelopes": 4598,
+        "sha256": "510d3f51f857d249bb814d88e4138b4d7852b2dbadfda7e4c30c36ac244f16ae",
+        "unmatched_envelopes": 0
+      },
+      "SEQUENCE_LIGHTWEIGHT": {
+        "ABSTAIN": 1,
+        "LOW_COVERAGE": 196,
+        "VALID": 4401,
+        "envelopes": 4598,
+        "sha256": "eb248ea5e44add8c201863c0b3b767c2c6966d4d0079dae862d28fce426ea3f1",
+        "unmatched_envelopes": 0
+      },
+      "SEQUENCE_LLAMA_REFERENCE": {
+        "ABSTAIN": 1,
+        "LOW_COVERAGE": 196,
+        "VALID": 4401,
+        "envelopes": 4598,
+        "sha256": "3d89f44107e264be02d2f03594dbb3d03dddf4e87894471a1d566dd7f0c455bb",
+        "unmatched_envelopes": 0
+      },
+      "comparators.parquet": {
+        "sha256": "d8c7cb9bd99d144160c8498875a28b8af95bc002552c5ed3b1a2238f99cd7dfd"
+      }
+    },
+    "FOLD-TARGET-ARCH-HDFS": {
+      "GTAT_STRUCTURAL_TEMPORAL": {
+        "VALID": 4608,
+        "envelopes": 4608,
+        "sha256": "d212a8ef0f50812d3dddd7dcf0d81c940f881fbdb334bf6e2e65959525121ff4",
+        "unmatched_envelopes": 0
+      },
+      "SEMANTIC_LLAMA": {
+        "ABSTAIN": 1,
+        "VALID": 4607,
+        "envelopes": 4608,
+        "sha256": "55037674d67037a6685d6cfc0f855c3991c81da7ac29a456f2f8e1017e4cbbda",
+        "unmatched_envelopes": 0
+      },
+      "SEQUENCE_LIGHTWEIGHT": {
+        "ABSTAIN": 1,
+        "LOW_COVERAGE": 219,
+        "VALID": 4388,
+        "envelopes": 4608,
+        "sha256": "a95ed0cfc8efc583fa29d39ec79075e1aa0e506a40250033ef95c919ef50b9fb",
+        "unmatched_envelopes": 0
+      },
+      "SEQUENCE_LLAMA_REFERENCE": {
+        "ABSTAIN": 1,
+        "LOW_COVERAGE": 219,
+        "VALID": 4388,
+        "envelopes": 4608,
+        "sha256": "c616b79af35745f914f3d7a5430177c4b3471cf84a12afe1b07166cf76a9e7e9",
+        "unmatched_envelopes": 0
+      },
+      "comparators.parquet": {
+        "sha256": "e936f361d0b9933745fd7920e56bf31c4e900a2706fdfd51240059955dcb8079"
+      }
+    }
+  },
+  "label_scope": {
+    "authority": "configs/protocols/c2-source-label-scope-v1.yaml",
+    "labeled_partition": "SOURCE_VALIDATION",
+    "labeled_sources_per_fold": {
+      "FOLD-TARGET-ARCH-BGL": [
+        "ARCH-HDFS"
+      ],
+      "FOLD-TARGET-ARCH-HDFS": [
+        "ARCH-BGL"
+      ]
+    },
+    "target_labels_read": false
+  },
+  "sequence_bundle_sha256": "1268b669a8b1b474658cfa7daa6556c987b0f31f07e0101ed30af250a8d7f129",
+  "sidecar_manifest_sha256": "885b53821671e7f60e6df5270a78a23535900bf4ba6d339e69b29f93eb2c6399",
+  "version": "1.0"
+}
