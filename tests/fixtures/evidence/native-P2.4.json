@@ -1,0 +1,33 @@
+{
+ "architecture_id": "ARCH-HADOOP",
+ "calibration_status": "NOT_CALIBRATED",
+ "checkpoint_sha256": "ca01cb263aec6f01c40ad63dcbf894b260027932e33a4d4d299cbd2b918e7ad8",
+ "context_config_sha256": "c7d84566f2c7a29c4ad834f9350c9648434cda866ba309eefe40be0280ccdc77",
+ "coverage": 1.0,
+ "evidence": {
+  "content_nll": 8.287175178527832,
+  "context_records": 64,
+  "structural_nll": 4.958227634429932,
+  "temporal_nll": 0.8748758435249329
+ },
+ "expert_id": "GTAT_STRUCTURAL_TEMPORAL",
+ "expert_role": "STRUCTURAL_TEMPORAL",
+ "fold_id": "FOLD-TARGET-ARCH-BGL",
+ "input_manifest_sha256": "8918172b4376fd822ec812e9b46b2725f83b517a43c94f3efe16f55623c9d059",
+ "localisation": {
+  "target_rank": 253148
+ },
+ "model_revision": "GTAT-ST-001",
+ "reason": "UNCERTAINTY_NOT_ESTIMATED_IN_PHASE2",
+ "record_ids": [
+  "ARCH-HADOOP:253148"
+ ],
+ "schema_version": "SEQLOGAD-EVIDENCE-DRAFT-P2.4",
+ "score_calibrated": null,
+ "score_direction": "HIGHER_IS_MORE_ANOMALOUS",
+ "score_raw": 14.120278656482697,
+ "status": "SCORED",
+ "uncertainty": null,
+ "uncertainty_method": null,
+ "unit_id": "win-8230ef8b8b61023a530a4e81ad2fd3b3112075f91d7d0e2fb1184715ba8a1225"
+}

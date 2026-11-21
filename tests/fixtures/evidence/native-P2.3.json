@@ -1,0 +1,69 @@
+{
+ "adaptation_variant": "LIGHT-SEQ-001",
+ "architecture_id": "ARCH-HADOOP",
+ "calibration_status": "NOT_CALIBRATED",
+ "checkpoint_sha256": "4cb9b30c6b41011c10c733cd415388326d2bef3f33dbecd4d08fb91a045fd068",
+ "context_config_sha256": "7a7cc831aceb75b7e6700be499c566d3ba2f635626c93f926714aa318751777c",
+ "coverage": 1.0,
+ "encoding_variant": "1.0",
+ "evidence": [
+  {
+   "context_coverage": 1.0,
+   "kind": "mean_next_log_target_token_nll",
+   "original_context_records": 8,
+   "original_target_words": 4,
+   "retained_context_records": 8,
+   "retained_target_words": 4,
+   "tokens_scored": 7,
+   "value": 9.315378189086914
+  }
+ ],
+ "expert_id": "SEQUENCE_LIGHTWEIGHT",
+ "expert_role": "SEQUENCE",
+ "fold_id": "FOLD-TARGET-ARCH-BGL",
+ "input_manifest_sha256": "1268b669a8b1b474658cfa7daa6556c987b0f31f07e0101ed30af250a8d7f129",
+ "localisation": [
+  {
+   "nll": 13.754334449768066,
+   "target_token_position_in_model_input": 185
+  },
+  {
+   "nll": 12.189737319946289,
+   "target_token_position_in_model_input": 186
+  },
+  {
+   "nll": 11.643209457397461,
+   "target_token_position_in_model_input": 187
+  },
+  {
+   "nll": 10.46107292175293,
+   "target_token_position_in_model_input": 189
+  },
+  {
+   "nll": 9.162601470947266,
+   "target_token_position_in_model_input": 188
+  }
+ ],
+ "model_revision": "NONE_TRAINED_FROM_SCRATCH",
+ "reason": null,
+ "record_ids": [
+  "ARCH-HADOOP:253139",
+  "ARCH-HADOOP:253140",
+  "ARCH-HADOOP:253141",
+  "ARCH-HADOOP:253142",
+  "ARCH-HADOOP:253143",
+  "ARCH-HADOOP:253144",
+  "ARCH-HADOOP:253145",
+  "ARCH-HADOOP:253147",
+  "ARCH-HADOOP:253148"
+ ],
+ "schema_version": "SEQUENCE-EVIDENCE-1",
+ "score_calibrated": null,
+ "score_direction": "HIGHER_IS_MORE_ANOMALOUS",
+ "score_raw": 9.315378189086914,
+ "status": "VALID",
+ "training_context_policy": "CAUSAL_SUFFIX_MULTI_SCALE",
+ "uncertainty": 3.7752353917139048,
+ "uncertainty_method": "TARGET_TOKEN_NLL_DISPERSION_NOT_CALIBRATED_CONFIDENCE",
+ "unit_id": "win-8230ef8b8b61023a530a4e81ad2fd3b3112075f91d7d0e2fb1184715ba8a1225"
+}

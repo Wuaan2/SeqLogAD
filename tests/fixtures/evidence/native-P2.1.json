@@ -1,0 +1,56 @@
+{
+ "architecture_id": "ARCH-HADOOP",
+ "calibration_status": "NOT_CALIBRATED",
+ "checkpoint_sha256": "13e680232d08e7713dace41541268be4383bb55bcf22c07af6ebe4f5a79c85d9",
+ "context_config_sha256": "8fa61a01ae9c5a11abe8e46418d30ea593ccb23451738be09998f8643eb53982",
+ "coverage": 1.0,
+ "evidence": [
+  {
+   "corruption_seed": 42,
+   "kind": "mean_reconstruction_token_nll",
+   "original_words": 27,
+   "retained_words": 27,
+   "tokens_scored": 65,
+   "value": 0.00045263177856720804
+  }
+ ],
+ "expert_id": "SEMANTIC_LLAMA",
+ "expert_role": "SEMANTIC",
+ "fold_id": "FOLD-TARGET-ARCH-BGL",
+ "input_manifest_sha256": "3ef2bfe36d2ad68205eea4290a632eb81db0d63acfb76c92f25a3eb96e8205de",
+ "localisation": [
+  {
+   "nll": 0.014549939893186092,
+   "token_position_in_model_input": 122
+  },
+  {
+   "nll": 0.006829136051237583,
+   "token_position_in_model_input": 90
+  },
+  {
+   "nll": 0.0021005249582231045,
+   "token_position_in_model_input": 147
+  },
+  {
+   "nll": 0.0018772137118503451,
+   "token_position_in_model_input": 146
+  },
+  {
+   "nll": 0.001150065683759749,
+   "token_position_in_model_input": 148
+  }
+ ],
+ "model_revision": "d04e592bb4f6aa9cfee91e2e20afa771667e1d4b",
+ "reason": null,
+ "record_ids": [
+  "ARCH-HADOOP:324428"
+ ],
+ "schema_version": "SEMANTIC-EVIDENCE-1",
+ "score_calibrated": null,
+ "score_direction": "HIGHER_IS_MORE_ANOMALOUS",
+ "score_raw": 0.00045263177856720804,
+ "status": "VALID",
+ "uncertainty": 0.001984393581071155,
+ "uncertainty_method": "TOKEN_NLL_DISPERSION_NOT_CALIBRATED_CONFIDENCE",
+ "unit_id": "324428"
+}

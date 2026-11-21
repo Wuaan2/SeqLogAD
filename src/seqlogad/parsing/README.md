@@ -1,0 +1,25 @@
+# Parsing
+
+The preserved PARSE-001 implementation provides the leakage-scoped parser lifecycle:
+
+- `normal_pool.py`: selects and hashes permitted normal `BASE_TRAIN` source
+  membership without persisting labels/messages;
+- `normalization.py`: isolates HDFS/BGL free-text Content from structured fields
+  and inline labels;
+- `drain_parser.py`: freezes config, fits Drain3 once, persists/restores it,
+  validates identities, exposes immutable `match`, and maps no match to
+  `EVT_UNSEEN`;
+- `seqlogad.cli.fit_parser`: gate/pool/fit/validate CLI.
+
+Input: accepted raw bytes, ordinary BASE split membership, scoped normal labels,
+and `configs/parsing/drain3-v1.yaml`.
+
+Output: ignored reproducible parser-state/provenance directories under
+`data/processed/parsers/`.
+
+Dependencies: Drain3 0.9.11, PyYAML, ingestion verification, split/TEST guards,
+checksums, and common schemas.
+
+The v2 canonical-view task must retain raw-text semantics and treat Drain3 as
+an optional structural field; it must not let parser output replace unseen
+target messages. No v2 target corpus or model artifact exists.
