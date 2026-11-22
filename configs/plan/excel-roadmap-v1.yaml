@@ -2,7 +2,7 @@ roadmap:
   schema_version: '1.0'
   authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
   source_workbook: Bang_ke_hoach_SeqLogAD.xlsx
-  source_workbook_sha256: 154a69a1092605739bf1d4646399b120c00b09235c810798790297030d4873b4
+  source_workbook_sha256: ede0297f452495ea4b7ad3cfe4c948d351a188e57183ce57c8df77b055711a99
   worksheets:
   - Executive
   - Roadmap
@@ -73,8 +73,8 @@ roadmap:
     depends_on:
     - P2.PRE
     - P2.1–P2.7
-    workbook_status: Not passed
-    evidence_link: —
+    workbook_status: Partial
+    evidence_link: configs/protocols/g2-signature.yaml
   - gate: G3
     decision: Fusion Justified
     required_evidence: MLP gate vs single/equal/Transformer/IF baselines; FAR/stability checks
@@ -457,7 +457,7 @@ roadmap:
     - P2.PRE
     definition_of_done: P2.PRE PASS before execution; independent adapter and scoring provenance, label-free
       source train/validation, semantic notebook and tests; REP-DG-001 conditional disposition recorded.
-    workbook_status: In progress
+    workbook_status: Done
     playbook:
       method: Implement semantic self-supervision and scoring with independent LoRA-Semantic. Retain source
         alignment / domain-adversarial diagnostic as conditional REP-DG-001 with explicit disposition;
@@ -486,7 +486,7 @@ roadmap:
     - P2.1
     definition_of_done: Independent reference checkpoint/config; order, session/partition boundaries and
       six sequence controls testable; notebook and lineage complete.
-    workbook_status: Not started
+    workbook_status: Done
     playbook:
       method: Retain separate LoRA-Sequence as reference candidate; ordered next-event/log objective,
         context evidence and boundary tests. No shared adapter weights/state; require portable data and
@@ -513,7 +513,7 @@ roadmap:
     - P2.2
     definition_of_done: Required lighter candidate evaluated under frozen resource criterion and shared
       contexts; all six sequence controls, cost/quality evidence and notebook; no unsupported winner claim.
-    workbook_status: Not started
+    workbook_status: Done
     playbook:
       method: Compare at least one substantially lighter explicit sequence architecture on the same contexts
         and budgets. Preregister resource criterion; no winner assumed. Require training notebook; reuse
@@ -539,7 +539,7 @@ roadmap:
     - P2.3
     definition_of_done: Exact graph source/spec/objective frozen; coverage and temporal expressiveness
       tested; missing topology yields unknown; notebook and lineage complete.
-    workbook_status: Not started
+    workbook_status: Done
     playbook:
       method: Freeze exact GTAT source and graph/temporal specification before training. Report coverage/abstain
         for missing fields. Structural-temporal role cannot silently replace sequence role; require graph
@@ -562,7 +562,7 @@ roadmap:
     - P2.4
     definition_of_done: All four candidate outputs validate common contract; unknown is explicit; no calibration,
       fabricated certainty or missing version/coverage.
-    workbook_status: Not started
+    workbook_status: Done
     playbook:
       method: Validate common evidence across all four candidates; raw score, uncertainty/unknown, coverage,
         record IDs and version lineage. Phase-2 calibrated score remains null; reject missing provenance.
@@ -587,7 +587,7 @@ roadmap:
     - P2.5
     definition_of_done: Versioned source diagnostics, redundancy and resource comparison; report unsupported
       capability. C2 blocks supervised metrics and completion evidence depending on them; no gate fitting.
-    workbook_status: Not started
+    workbook_status: Done
     playbook:
       method: Own source-held-out diversity diagnostics and sequence controls for all candidates. No target
         inputs or adaptive fusion. Source-label metrics remain blocked pending explicit evaluation permission;
@@ -611,7 +611,7 @@ roadmap:
     - P2.6
     definition_of_done: P2.6 complete; source-label/capability issues resolved for required evidence;
       reference artifacts retained; researcher G2 review required; G2 remains NOT_PASSED until signed.
-    workbook_status: Not started
+    workbook_status: Done
     playbook:
       method: Freeze candidate dispositions, retained reference artifacts, common interface and reproducibility
         package. Assemble G2 evidence for researcher review; no automatic gate pass or Phase-3 activation.
@@ -635,7 +635,7 @@ roadmap:
     - P2.7
     definition_of_done: P2.6 evidence hashes and researcher G2 signature verified; Phase 3 remains disabled
       before approval.
-    workbook_status: Waiting researcher
+    workbook_status: Ready
     playbook:
       method: Verify P2.6 diagnostic artifacts and P2.7 package hashes; confirm researcher G2 signature
         before integration. Do not duplicate source evaluation or use target labels for tuning.
