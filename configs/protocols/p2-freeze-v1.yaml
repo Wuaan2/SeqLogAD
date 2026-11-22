@@ -1,0 +1,170 @@
+# P2.7 Phase-2 freeze (P2-FREEZE-001). Every artifact is bound by SHA-256 and addressed relative to
+# the project root (the folder that holds Ma_nguon/ and the P2.x_* folders), so the bundle can move.
+# Verify: python scripts/verify_p2_freeze.py --root <project root>
+p2_freeze:
+  id: P2-FREEZE-001
+  version: '1.0'
+  frozen_on: '2026-11-22'
+  status: FROZEN_ACCEPTED_BY_RESEARCHER
+  document: docs/protocol/P2.7-phase2-freeze.md
+  run_mode: development
+  seed: 42
+  protocol: EXC-007  # target folds HDFS and BGL; Hadoop and OpenStack source-only
+  folds: [FOLD-TARGET-ARCH-BGL, FOLD-TARGET-ARCH-HDFS]
+  drive_root: MyDrive/SeqLogAD
+  gates:
+    G0: {state: PASSED, record: configs/protocols/g0-signatures.yaml}
+    G2: {state: PARTIAL, record: configs/protocols/g2-signature.yaml}
+  p3_launch: MANUAL_AFTER_RESEARCHER_REVIEW  # P2.7 never starts P3
+  # Recorded from the researcher's instructions in the working session; the agent signs nothing.
+  researcher_review:
+    decided_by: RESEARCHER
+    decided_on: '2026-11-22'
+    dispositions: ACCEPTED_AS_FROZEN
+    seed_42_runs: ACCEPTED_AS_PHASE_2_DELIVERABLES  # supersedes P2-DEV-S42 "development only" for routing
+    confirmation_seeds: {seeds: [3407, 8675309], status: DEFERRED}
+    multi_seed_stability_claims: FORBIDDEN
+    p3_authorized_tasks: [P3.1]
+    workbook_update: configs/protocols/phase2-architecture-v1.yaml#phase2.tasks.P2.7.roadmap_update
+
+  artifacts:
+    data_semantic: {path: P2.1_Semantic/uploads/phase2-final.zip, sha256: ebcfdfd6eb7b1607eb6d57e60fae88456d03bcb8ae2c6688ea398042c856224b}
+    data_sequence: {path: P2.2_Sequence/uploads/phase2-sequence-s42.zip, sha256: 4ed76b92e4b001138b28b4b3b4d3017d6ff7f30dd31e8cca0649bfdf34ede781,
+                    inner_manifest: {bundle.json: 1268b669a8b1b474658cfa7daa6556c987b0f31f07e0101ed30af250a8d7f129}}
+    source_labels: {path: P2.2_Sequence/uploads/phase2-source-development-v13r1.zip, sha256: c765eb88a4feebc8ceb157110e5a6bd28dec942a7fb9343d7f6b969b3e79b295,
+                    inner_manifest: {manifest.json: 885b53821671e7f60e6df5270a78a23535900bf4ba6d339e69b29f93eb2c6399}}
+    data_graph: {path: P2.4_GTAT/uploads/phase2-graph-s42.zip, sha256: 595b5dc7ec1b96abc80b4722b5f39dcf1c5653ec25aefebcce7ee74dbf36f9ac,
+                 inner_manifest: {graph-bundle.json: 8918172b4376fd822ec812e9b46b2725f83b517a43c94f3efe16f55623c9d059}}
+    code_p2_1_p2_2: {path: P2.1_Semantic/uploads/seqlogad-code-s42-hdfs-bgl-v3.zip, sha256: feef719adcde698b507a9b0ffe46e97ca178371cc8c3d215dfd16f26b758edba}
+    code_p2_3: {path: P2.3_Lightweight/uploads/seqlogad-code-s42-p2.3-hdfs-bgl-v1.zip, sha256: 4aa643397864922455295e701dd484129ff08083e7731689aaf193024e4eb515}
+    code_p2_4: {path: P2.4_GTAT/uploads/seqlogad-code-s42-p2.4-hdfs-bgl-v1.zip, sha256: cb2e0741dc6d1b701b113f7e1beb698ecf8dd02e25ccec1d603973c920210758}
+    code_p2_6_scoring: {path: P2.6_Diversity/uploads/seqlogad-code-s42-p2.6-scoring-v2.zip, sha256: 9a429cc53096ab6c11446c7c3743b71c6b2eb5c62a89e82d81801748c98ab172}
+    final_p2_1: {path: P2.1_Semantic/outputs/seqlogad_outputs_P2.1_S42_FINAL.zip, sha256: 8308a1b28875c1012b8a1942ca90898a4ca39e6c68f52e46bdd3e9601c7e603f}
+    final_p2_2: {path: P2.2_Sequence/outputs/seqlogad_outputs_P2.2_S42_FINAL.zip, sha256: 6c009f2cd91c37899e340d877e4902197f9f5f96b4e164dbf86cb749583265c6}
+    final_p2_3: {path: P2.3_Lightweight/outputs/seqlogad_outputs_P2.3_S42_FINAL.zip, sha256: eb8fe68141fde1f32516b6330b108d9965c4d7d9d130736912663ef52a68e2c4}
+    final_p2_4: {path: P2.4_GTAT/outputs/seqlogad_outputs_P2.4_S42_FINAL.zip, sha256: ff82c65343229183fd6caa7c0518961e58301ee5c7f71eb2d5fdce5eabbcfde3}
+    evidence_p2_1_to_p2_3: {path: P2.6_Diversity/outputs/P2.6_evidence_S42.zip, sha256: 61f2a1cab0db93dd280b3ba8def67e735fa0c35815947abe4172a0684d468850}
+    evidence_p2_4_bgl: {path: P2.6_Diversity/evidence/FOLD-TARGET-ARCH-BGL/GTAT_STRUCTURAL_TEMPORAL.jsonl, sha256: 65ac0db464c2d9d772e79ca4cc91d253b126745dded5a32959c2f1437f8835e9}
+    evidence_p2_4_hdfs: {path: P2.6_Diversity/evidence/FOLD-TARGET-ARCH-HDFS/GTAT_STRUCTURAL_TEMPORAL.jsonl, sha256: d212a8ef0f50812d3dddd7dcf0d81c940f881fbdb334bf6e2e65959525121ff4}
+    comparators_bgl: {path: P2.6_Diversity/evidence/FOLD-TARGET-ARCH-BGL/comparators.parquet, sha256: d8c7cb9bd99d144160c8498875a28b8af95bc002552c5ed3b1a2238f99cd7dfd}
+    comparators_hdfs: {path: P2.6_Diversity/evidence/FOLD-TARGET-ARCH-HDFS/comparators.parquet, sha256: e936f361d0b9933745fd7920e56bf31c4e900a2706fdfd51240059955dcb8079}
+
+  experts:
+    P2.1:
+      expert_id: SEMANTIC_LLAMA
+      role: SEMANTIC
+      config: configs/models/semantic-v1.yaml
+      contract: docs/protocol/P2.1-semantic-expert.md
+      notebook: colab/P2.1_Semantic/P2.1_Semantic.ipynb
+      code: code_p2_1_p2_2
+      data: [data_semantic]
+      final: final_p2_1
+      inference_entry_point: seqlogad.semantic.expert.SemanticExpert.from_checkpoint
+      runs:
+        BGL: {run_id: P2.1-FINAL-BGL-S42, checkpoint: step-1100, precision: torch.bfloat16,
+              target_zip_sha256: 8d7cf3d1ad8a4cee66b510b6866c16cac01322e460806f0b93e376bf0701465a,
+              weights_sha256: 13e680232d08e7713dace41541268be4383bb55bcf22c07af6ebe4f5a79c85d9}
+        HDFS: {run_id: P2.1-FINAL-HDFS-S42, checkpoint: step-900, precision: torch.bfloat16,
+               target_zip_sha256: 3444e58931decb9011b7906cae69b43f7502948b5df7a2d0a30b1f824b0b3f5c,
+               weights_sha256: d3d0878d3b427d2b086d19405ad21d5ec05fe6aa581bfabae5f7f8e60e65e7d5}
+      disposition: RETAINED_WEAK  # below the cheap comparators in both labeled sources; adds no evidence
+    P2.2:
+      expert_id: SEQUENCE_LLAMA_REFERENCE
+      role: SEQUENCE
+      config: configs/models/sequence-reference-v13r1.yaml
+      contract: docs/protocol/P3.1-source-labeled-development-amendment-2026-09-27.md
+      notebook: colab/P2.2_Sequence/P2.2_Sequence.ipynb
+      code: code_p2_1_p2_2
+      data: [data_sequence, source_labels]
+      final: final_p2_2
+      inference_entry_point: seqlogad.diversity.score.sequence_scorer  # SequenceExpert rejects it: implementation digest changed
+      runs:
+        BGL: {run_id: P2.2-DEVELOPMENT-BGL-S42-V13R1, checkpoint: step-500, precision: torch.bfloat16,
+              target_zip_sha256: 19089ddb09d03c7df953d07bf65e72c9ed168a01aa558fab606826391219e37e,
+              weights_sha256: 23106f780acad29e2d049ee951850cc805500f04158ef24b7426e72323b6cc8d}
+        HDFS: {run_id: P2.2-DEVELOPMENT-HDFS-S42-V13R1, checkpoint: step-100, precision: torch.bfloat16,
+               target_zip_sha256: 6c18795fa99df7a6e43d5da5bfb3d172e10a76a494acded300c582e6bdb8fd99,
+               weights_sha256: 3cf494ca45bb334970eae95fac54baee386d21afcd154d7429083f809b965113}
+      disposition: RETAINED_REFERENCE  # best single expert in both folds
+    P2.3:
+      expert_id: SEQUENCE_LIGHTWEIGHT
+      role: SEQUENCE
+      config: configs/models/sequence-lightweight-v1.yaml
+      contract: docs/protocol/P2.3-lightweight-sequence-expert.md
+      notebook: colab/P2.3_Lightweight/P2.3_Lightweight.ipynb
+      code: code_p2_3
+      data: [data_sequence, source_labels]
+      final: final_p2_3
+      inference_entry_point: seqlogad.diversity.score.sequence_scorer
+      runs:
+        BGL: {run_id: P2.3-DEVELOPMENT-BGL-S42, checkpoint: step-300, precision: torch.bfloat16,
+              target_zip_sha256: ff21bad511b65454dee73755ff560e734155fdc6ebd40e8a2bbf643198a37a64,
+              weights_sha256: 4cb9b30c6b41011c10c733cd415388326d2bef3f33dbecd4d08fb91a045fd068}
+        HDFS: {run_id: P2.3-DEVELOPMENT-HDFS-S42, checkpoint: step-500, precision: torch.bfloat16,
+               target_zip_sha256: 91adc91d91c63e60e7b566c704746a99ee41d16d9345750df2ffe9373d6d71d5,
+               weights_sha256: b5443bc1de3381a5f2770a550d376a77dbaec37c57e9d090d4055f0a4fc8aa56}
+      disposition: RETAINED_LIGHTWEIGHT_CANDIDATE  # equivalent to P2.2 at 0.46% of its parameters
+    P2.4:
+      expert_id: GTAT_STRUCTURAL_TEMPORAL
+      role: STRUCTURAL_TEMPORAL
+      config: configs/models/gtat-v1.yaml
+      contract: docs/protocol/P2.4-gtat-structural-temporal-expert.md
+      notebook: colab/P2.4_GTAT/P2.4_GTAT.ipynb
+      code: code_p2_4
+      data: [data_sequence, source_labels, data_graph]
+      final: final_p2_4
+      inference_entry_point: seqlogad.diversity.score.gtat_scorer
+      runs:
+        BGL: {run_id: P2.4-DEVELOPMENT-BGL-S42, checkpoint: step-2000, precision: torch.float32,
+              target_zip_sha256: df23bcb8d296e6ac44cd34c17edba15de20f8ba30517c71f361aa1755848a2ef,
+              weights_sha256: a9f8f153614eac1daa6bb00ecd46e9c2c78977b7c982b9159769aa4537dbf9a7}
+        HDFS: {run_id: P2.4-DEVELOPMENT-HDFS-S42, checkpoint: step-500, precision: torch.float32,
+               target_zip_sha256: 33092599c28c17198042f5bc0d8b5f6aaf3e9096713938aef07a76b64e6f4918,
+               weights_sha256: 659c751cac1c27f1efca04d6102526a82ddd570e17b04aecbd2eb5bced1f068b}
+      disposition: RETAINED_NOT_ROBUST  # HDFS-fold gain disappears under message-cluster bootstrap
+  sequence_winner: UNDECIDED  # P2.2 and P2.3 are statistically equivalent; both are retained
+
+  inference_guard: REPRODUCE_STORED_SANITY_EVIDENCE_BEFORE_SCORING  # seqlogad.diversity.score.score_task
+  evidence_schema: EVID-CS-001
+  reports: [docs/reports/P2.3-vs-P2.2-sequence-comparison.md, docs/reports/DIV-P2-001.md,
+            docs/reports/DIV-P2-001-review.md]
+
+  # Repository files bound at freeze time; SHA-256 of the LF-normalised bytes (checkout line endings do not matter).
+  repo_files:
+    configs/models/semantic-v1.yaml: 0008929b46759bf5010014a5bac9f3ef6309bc41e128a6381c69395227174540
+    configs/models/sequence-reference-v13r1.yaml: f4e5db161b3397a315c34becc32d241dc375d41b3cfd78e7785eb195294b65e1
+    configs/models/sequence-lightweight-v1.yaml: 9f60bdaf09898200e77795aae270810e99363bec5b395a0e6c739d7ab2fe5bc0
+    configs/models/gtat-v1.yaml: e86481f7a3fb339a6b597f91935e57b3ca1abdf2e952036213e6131327771fbf
+    configs/models/base-freeze-v1.yaml: f465d41dfd686179acbaa4fb76291fc844442619dcb8c502bde9953c07c6e61f
+    configs/protocols/phase2-development-s42-v1.yaml: c51fe405fb72fda893cfaf8acfac17f8092aeb72969496e43774bc2d6a9e3de2
+    configs/protocols/c2-source-label-scope-v1.yaml: 219f27c0759242040d72b6d4844514aa2f504dbb8cba00c216a893cd3c7d8456
+    configs/protocols/p2.6-diversity-v1.yaml: 25fb5c69353e566e2ddad803795a482892162b8961ac3541978fad06de04c9c3
+    configs/protocols/g2-signature.yaml: a8cf03da356b2c4a3ebdf50e26aa93a963d38a2cc6e597bd1aa9e36618a4b0fb
+    docs/protocol/P2.1-semantic-expert.md: b5324b166b16df81f7d4af44af347574916d1f578e742510f1bb084f02be3d1d
+    docs/protocol/P3.1-source-labeled-development-amendment-2026-09-27.md: fbef8412037a3bd150b8133ced80605bfc3d7b690071006b188cbc4c70ee629c
+    docs/protocol/P2.3-lightweight-sequence-expert.md: cc3e0b428a24acbeb096c7ebe00a4dc4b52705de895c831cbc87a345532b5b0a
+    docs/protocol/P2.4-gtat-structural-temporal-expert.md: 704bb867960806a767bf82eef75124b67d21e48395b50c282840eaab902792d1
+    docs/protocol/P2.5-common-evidence-contract.md: 7ac4131f845177a657e30c78d43645919fa53d1c14dff46a444c713be6cd500f
+    docs/protocol/P2.6-expert-diversity-preregistration.md: 83783ffc30aa88d45f60c88df81508cc83aff91ccb4fa1036f18f624b75ba722
+    colab/P2.1_Semantic/P2.1_Semantic.ipynb: 2c3778f30440f1abaedf84643bc5b50fecc6d36f81cb7b95f313e77f83a95bf2
+    colab/P2.2_Sequence/P2.2_Sequence.ipynb: e0052f66ae882501fd6b9235b18bdd4c76e2ccd3bb8892ffefe055c162b836a9
+    colab/P2.3_Lightweight/P2.3_Lightweight.ipynb: 521c1eac0f9eb8a9f5f8d1e95da106450605a9a5a9beb0b3d7df9cd8d3a4227b
+    colab/P2.4_GTAT/P2.4_GTAT.ipynb: 17cbbac7fbae3e0a59fc5f2ea450a4beaafdd7a94dd1a0e4e25e5a99aa06f4a9
+    colab/P2.6_Diversity/P2.6_Scoring.ipynb: 2b4d325e40b06ba6e151fb1104acbd979ef952f263ace80f609ef8a6f2d208b6
+    src/seqlogad/semantic/expert.py: 62356eacae9a386605290a06344f3fbd9aa421cb6bd4d8705acddc15477e4b06
+    src/seqlogad/diversity/score.py: 366303ffa8485d4005c4ee3e8d75e1da292d2b2d2674c831063e9dc65d4e62f4
+    src/seqlogad/diversity/analysis.py: 3f6a85e444d1df19a128332436279673579379213bb2a39adc4e3ef423ec7a12
+    src/seqlogad/diversity/units.py: 6f1a28165d8d2eb9cbac2fefce373935c821ded2660440f827d3d575b60f51a6
+    src/seqlogad/evidence/contract.py: 61517e4cad1bb236ad62ccfd2c9cf3eff9743f12c8f6a233bcbc8c9032ee0e39
+    src/seqlogad/evidence/convert.py: 83749d4a4f899555f18e0378824827f4c83eb9ae3310c1155589ce31a1242767
+    docs/reports/DIV-P2-001.json: b5198ae97bcd73d04d82e91e8fe37bdc13cadc03946e9bf7b22e7e03ac481f35
+    docs/reports/DIV-P2-001.md: da608fa72ce24c937bc125e9cc424bccc6845136e9d3d7fd8a1a161d05938782
+    docs/reports/DIV-P2-001-review.md: 7eb81d5518120b5c3d5951e3dae05ec8043bbecf58169c5437e4d9b378056ca5
+
+  # Every evaluation window must have exactly one valid EVID-CS-001 envelope per expert; receipts must show
+  # the sanity reproduction passed and no label was read.
+  evidence_checks:
+    zip: evidence_p2_1_to_p2_3
+    jsonl: {evidence_p2_4_bgl: FOLD-TARGET-ARCH-BGL, evidence_p2_4_hdfs: FOLD-TARGET-ARCH-HDFS}
+    windows: {FOLD-TARGET-ARCH-BGL: 4598, FOLD-TARGET-ARCH-HDFS: 4608}
+    experts_in_zip: [SEMANTIC_LLAMA, SEQUENCE_LLAMA_REFERENCE, SEQUENCE_LIGHTWEIGHT]
