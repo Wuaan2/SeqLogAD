@@ -53,6 +53,7 @@ active_state:
   scientific_results_status: NOT_RUN  # no target result; DIV-P2-001 is a source-side diagnostic
   representation_training_status: COMPLETE_SEED_42
   phase2_freeze: configs/protocols/p2-freeze-v1.yaml
+  g2_handoff: configs/protocols/p3.1-g2-handoff-v1.yaml  # P3.1 verified 2026-11-22; awaiting researcher acceptance
   target_adaptation_status: NOT_STARTED
   phase_1_artifacts:
     dataset_registry: data/registry/dataset_registry.json
