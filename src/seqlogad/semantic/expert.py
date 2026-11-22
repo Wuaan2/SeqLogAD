@@ -21,8 +21,10 @@ class SemanticExpert:
         checkpoint = run / 'checkpoints' / (checkpoint_name or manifest['best_checkpoint'])
         if not checkpoint.resolve().is_relative_to((run / 'checkpoints').resolve()):
             raise ValueError('checkpoint path outside run')
-        expected = dict(manifest['identity'], config_sha256=identity(cfg))
-        verify_checkpoint(checkpoint, expected)
+        # config.yaml gains real_training_completed=True after training; the run identity predates that.
+        if manifest['identity']['config_sha256'] not in {identity(cfg), identity(dict(cfg, real_training_completed=False))}:
+            raise ValueError('expert config differs from the trained run')
+        verify_checkpoint(checkpoint, manifest['identity'])
         model, tokenizer, dtype = load_model(cfg, base, checkpoint / 'adapter')
         if str(dtype) != manifest['precision']:
             raise ValueError('inference precision differs from trained run')
