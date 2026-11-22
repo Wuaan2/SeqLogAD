@@ -49,11 +49,11 @@ def test_unique_ids_and_exact_linear_order_across_authorities():
         contract = P2["tasks"][task["task_id"]]
         assert task["dependencies"] == contract["depends_on"] == expected
         assert task["workstream"] == contract["name"]
-        assert task["workbook_status"] == ("Done" if index == 0 else "In progress" if index == 1 else "Not started")
+        assert task["workbook_status"] == "Done"  # P2-FREEZE-001 accepted by the researcher
     for task in roadmap["tasks"]:
         assert set(task["dependencies"]) <= set(ids)
     for path in (".ai/task-routing.md", ".ai/primary-context.md", "README.md"):
-        assert "NEXT_AUTHORIZED_TASK = P2.1" in (ROOT / path).read_text()
+        assert "NEXT_AUTHORIZED_TASK = P3.1" in (ROOT / path).read_text(encoding="utf-8")
     routing = (ROOT / ".ai/task-routing.md").read_text()
     assert " → ".join(ORDER) in routing
 
@@ -110,13 +110,22 @@ def test_only_declared_phase2_and_dependent_cells_changed():
 def test_data_notebooks_experts_and_label_permissions_are_unchanged():
     for key, digest in MIG["preserved_p20_section_sha256"].items():
         historical = copy.deepcopy(P2[key])
-        # P2.1 advances lifecycle only; reconstruct the P2.0 snapshot for its hash.
+        # P2.1-P2.7 advance lifecycle fields only; reconstruct the P2.0 snapshot for its hash.
         if key == "portability":
             assert historical["prepared_data_status"] == "SEMANTIC_MATERIALIZED_OTHERS_NOT_CREATED"
             historical["prepared_data_status"] = "NOT_CREATED_YET"
         if key == "experts":
-            assert historical[0]["status"] == "IMPLEMENTATION_READY"
-            historical[0]["status"] = "PLANNED"
+            p20 = [{"status": "PLANNED"}, {"status": "REFERENCE_CANDIDATE"},
+                   {"status": "REQUIRED_CANDIDATE_SLOT", "model": "TO_BE_SELECTED_BEFORE_P2_3_TRAINING"},
+                   {"status": "SPECIFICATION_REQUIRED",
+                    "primary_objective": "STRUCTURAL_TEMPORAL_SELF_SUPERVISION_TO_SPECIFY"}]
+            assert [e["status"] for e in historical] == ["RETAINED_WEAK", "RETAINED_REFERENCE",
+                                                         "RETAINED_LIGHTWEIGHT_CANDIDATE", "RETAINED_NOT_ROBUST"]
+            for expert, fields in zip(historical, p20):
+                expert.update(fields)
+        if key == "source_label_scope":
+            assert historical == P2["source_label_blocker"]["status"]  # C2 resolved 2026-11-22
+            historical = "UNRESOLVED_DENY"
         assert hashlib.sha256(json.dumps(historical, sort_keys=True).encode()).hexdigest() == digest
     assert P2["portability"]["data_root"] == "data/phase2"
     assert P2["portability"]["fold_root"] == "folds/{fold_id}"
@@ -126,10 +135,10 @@ def test_data_notebooks_experts_and_label_permissions_are_unchanged():
         "notebooks/P2.3_train_lightweight_sequence_expert.ipynb",
         "notebooks/P2.4_train_gtat_expert.ipynb",
     ]
-    assert P2["source_label_scope"] == "UNRESOLVED_DENY"
+    # C2 was resolved before P2.6 scoring; the resolution record is the authority on label scope.
+    assert P2["source_label_scope"] == P2["source_label_blocker"]["status"] == "RESOLVED_SOURCE_VALIDATION_DEVELOPMENT_AND_DIVERSITY"
+    assert (ROOT / P2["source_label_blocker"]["resolved_by"]).is_file()
     assert P2["source_label_blocker"]["training_or_selection_permission"] is False
-    for tid in ("P2.6", "P2.7"):
-        assert "SOURCE_LABEL_SCOPE_FOR_SUPERVISED_METRICS" in P2["tasks"][tid]["blockers"]
 
 
 def test_base_prerequisite_pass_is_metadata_only():
@@ -168,12 +177,13 @@ def test_base_prerequisite_pass_is_metadata_only():
     assert base["future_runtime_preflight"]["owner"] == "P2.1"
     assert base["future_runtime_preflight"]["executed"] is False
     state = read("configs/active-state.yaml")["active_state"]
-    assert state["next_authorized_task"] == "P2.1"
+    assert state["next_authorized_task"] == "P3.1"
     assert state["semantic_execution_authorized"] is True
     assert state["phase3_enabled"] is False
     assert P2["tasks"]["P2.1"]["execution_authorized"] is True
     assert P2["training_authorized"] is P2["phase3_enabled"] is False
-    assert all(state["gates"][g] == "NOT_PASSED" for g in ("G1", "G2", "G3", "G4"))
+    assert all(state["gates"][g] == "NOT_PASSED" for g in ("G1", "G3", "G4"))
+    assert state["gates"]["G2"] == "PARTIAL"
 
 
 def test_future_receipt_routes_metadata_prerequisite_without_rewriting_history():

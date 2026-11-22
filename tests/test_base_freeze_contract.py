@@ -61,10 +61,10 @@ def test_authenticated_metadata_is_required_for_pass_and_only_semantic_is_author
     assert verification['model_weights_downloaded'] is False
     assert P2['tasks']['P2.1']['depends_on'] == ['P2.PRE']
     assert P2['tasks']['P2.1']['execution_authorized'] is STATE['semantic_execution_authorized'] is True
-    assert P2['tasks']['P2.1']['status'] in {'IMPLEMENTING', 'IMPLEMENTATION_READY'}
-    assert all(not P2['tasks'][f'P2.{i}']['execution_authorized'] for i in range(2, 8))
+    # Phase 2 later ran to completion (P2-FREEZE-001); Phase 3 stays closed in this contract.
+    assert all(P2['tasks'][f'P2.{i}']['status'] == 'COMPLETE' for i in range(1, 8))
     assert STATE['phase3_enabled'] is P2['phase3_enabled'] is False
-    assert BASE['data']['source_label_scope'] == P2['source_label_scope'] == 'UNRESOLVED_DENY'
+    assert BASE['data']['source_label_scope'] == 'UNRESOLVED_DENY'  # state when the base was frozen; C2 resolved later
 
 
 def test_base_is_shared_but_adapter_and_optimizer_states_are_isolated():

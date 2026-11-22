@@ -24,9 +24,9 @@ def test_roles_and_sequence_candidates_cannot_collapse() -> None:
         "GTAT_STRUCTURAL_TEMPORAL": "STRUCTURAL_TEMPORAL",
     }
     by_id = {e["id"]: e for e in experts}
-    assert by_id["SEQUENCE_LLAMA_REFERENCE"]["status"] == "REFERENCE_CANDIDATE"
+    assert by_id["SEQUENCE_LLAMA_REFERENCE"]["status"] == "RETAINED_REFERENCE"
     assert by_id["SEQUENCE_LLAMA_REFERENCE"]["adapter"] == "LoRA-Sequence"
-    assert by_id["SEQUENCE_LIGHTWEIGHT"]["status"] == "REQUIRED_CANDIDATE_SLOT"
+    assert by_id["SEQUENCE_LIGHTWEIGHT"]["status"] == "RETAINED_LIGHTWEIGHT_CANDIDATE"
     assert P2["sequence_winner"] == "UNDECIDED"
     assert P2["gtat_satisfies_sequence_role"] is False
     assert all(e["primary_objective"] for e in experts)
@@ -65,8 +65,10 @@ def test_future_phases_and_scientific_claims_are_not_activated() -> None:
     assert evaluation["anomaly_label_access"] is False
     assert evaluation["adaptive_fusion"] is evaluation["g2_auto_pass"] is False
     assert evaluation["synthetic_results_are_natural_anomaly_results"] is False
-    assert evaluation["supervised_metrics_status"] == "BLOCKED_PENDING_SOURCE_EVALUATION_SCOPE"
-    assert P2["source_label_scope"] == "UNRESOLVED_DENY"
+    assert evaluation["supervised_metrics_status"] == "SOURCE_VALIDATION_ONLY_UNDER_C2"
+    c2 = yaml.safe_load((ROOT / "configs/protocols/c2-source-label-scope-v1.yaml").read_text())["c2_source_label_scope"]
+    assert P2["source_label_scope"] == P2["source_label_blocker"]["status"] == c2["status"]
+    assert c2["target_labels_allowed"] is False
 
 
 def test_data_paths_and_dependency_closure_conventions() -> None:
@@ -128,11 +130,11 @@ def test_controls_and_evidence_do_not_promise_calibration() -> None:
 
 def test_task_execution_and_future_preflight_cannot_be_skipped() -> None:
     for task_id, task in P2["tasks"].items():
-        assert task["execution_authorized"] is (task_id in {"P2.PRE", "P2.1"})
-        assert "ROUTING_MIGRATION" not in task["blockers"]
-    assert P2["tasks"]["P2.PRE"]["status"] == "PASS"
-    assert P2["tasks"]["P2.1"]["blockers"] == []
-    assert "GTAT_SPECIFICATION_BEFORE_TRAINING" in P2["tasks"]["P2.4"]["blockers"]
+        assert task["execution_authorized"] is True
+        assert task["blockers"] == []
+        assert task["status"] == ("PASS" if task_id == "P2.PRE" else "COMPLETE")
+    assert P2["phase2_status"] == "COMPLETE_SEED_42_FROZEN"
+    assert (ROOT / P2["freeze_manifest"]).is_file()
     preflight = P2["implementation_preflight"]
     assert preflight["required_before_materialization_or_training"] is True
     assert preflight["forbid_label_inventory_as_model_input"] is True

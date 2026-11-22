@@ -95,7 +95,7 @@ def test_g0_required_evidence_is_recorded_verbatim(roadmap: dict) -> None:
 def test_active_state_routes_the_workbook_and_nothing_else() -> None:
     state = _yaml("configs/active-state.yaml")["active_state"]
     assert state["authoritative_plan"]["path"] == "Bang_ke_hoach_SeqLogAD.xlsx"
-    assert state["next_authorized_task"] == "P2.1"
+    assert state["next_authorized_task"] == "P3.1"
     for pointer in RETIRED_POINTERS:
         assert pointer in state["historical_foundation"]["retired_pointers"]
 
@@ -126,14 +126,15 @@ def test_no_retired_pointer_is_reachable_as_active_routing() -> None:
     walk(state)
 
 
-def test_next_authorized_task_is_the_first_workbook_phase_2_task(roadmap: dict) -> None:
+def test_next_authorized_task_is_the_first_unfinished_workbook_task(roadmap: dict) -> None:
     phase_2 = [task for task in roadmap["tasks"] if task["task_id"].startswith("P2.")]
     first = phase_2[0]  # Workbook order, not lexical order (P2.PRE comes first).
     state = _yaml("configs/active-state.yaml")["active_state"]
     assert first["task_id"] == "P2.PRE"
-    assert first["workbook_status"] == "Done"
-    pending = next(t for t in phase_2 if t["workbook_status"] != "Done")
-    assert state["next_authorized_task"] == pending["task_id"] == "P2.1"
+    assert all(t["workbook_status"] == "Done" for t in phase_2)
+    pending = next(t for t in roadmap["tasks"] if t["workbook_status"] != "Done")
+    assert state["next_authorized_task"] == pending["task_id"] == "P3.1"
+    assert pending["workbook_status"] == "Ready"
     assert first["output"] == "LLM-BASE-001"
     assert first["dependencies"] == ["P1.8"]
 
@@ -277,5 +278,8 @@ def test_workbook_status_agrees_with_the_receipt(roadmap: dict) -> None:
 
     phase_1 = [t for t in roadmap["tasks"] if t["task_id"].startswith("P1.")]
     assert all(t["workbook_status"].strip().lower() == "done" for t in phase_1)
-    assert all(t["workbook_status"].strip().lower() != "done"
-               for t in roadmap["tasks"] if t["task_id"].startswith("P2.") and t["task_id"] != "P2.PRE")
+    # Phase 2 may be Done only once the P2.7 freeze has been accepted by the researcher.
+    freeze = _yaml("configs/protocols/p2-freeze-v1.yaml")["p2_freeze"]
+    phase_2_done = all(t["workbook_status"].strip().lower() == "done"
+                       for t in roadmap["tasks"] if t["task_id"].startswith("P2."))
+    assert phase_2_done == (freeze["status"] == "FROZEN_ACCEPTED_BY_RESEARCHER")
