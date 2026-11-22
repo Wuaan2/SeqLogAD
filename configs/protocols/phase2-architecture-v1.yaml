@@ -15,11 +15,13 @@ phase2:
   sequence_requirement: EXPLICIT_SEQUENCE_CAPABILITY_REQUIRED
   sequence_winner: UNDECIDED
   gtat_satisfies_sequence_role: false
-  source_label_scope: UNRESOLVED_DENY
+  source_label_scope: RESOLVED_SOURCE_VALIDATION_DEVELOPMENT_AND_DIVERSITY  # C2, configs/protocols/c2-source-label-scope-v1.yaml
+  phase2_status: COMPLETE_SEED_42_FROZEN  # P2.2-P2.6 ran under configs/protocols/phase2-development-s42-v1.yaml
+  freeze_manifest: configs/protocols/p2-freeze-v1.yaml
   experts:
   - id: SEMANTIC_LLAMA
     role: SEMANTIC
-    status: IMPLEMENTATION_READY
+    status: RETAINED_WEAK
     model: Llama-3.1-8B
     adapter: LoRA-Semantic
     primary_objective: RAW_TEXT_SEMANTIC_SELF_SUPERVISION
@@ -29,7 +31,7 @@ phase2:
     notebook: notebooks/P2.1_train_semantic_expert.ipynb
   - id: SEQUENCE_LLAMA_REFERENCE
     role: SEQUENCE
-    status: REFERENCE_CANDIDATE
+    status: RETAINED_REFERENCE
     model: Llama-3.1-8B
     adapter: LoRA-Sequence
     primary_objective: CAUSAL_NEXT_EVENT_OR_NEXT_LOG
@@ -39,8 +41,8 @@ phase2:
     notebook: notebooks/P2.2_train_sequence_reference.ipynb
   - id: SEQUENCE_LIGHTWEIGHT
     role: SEQUENCE
-    status: REQUIRED_CANDIDATE_SLOT
-    model: TO_BE_SELECTED_BEFORE_P2_3_TRAINING
+    status: RETAINED_LIGHTWEIGHT_CANDIDATE
+    model: LIGHT-SEQ-001  # configs/models/sequence-lightweight-v1.yaml
     adapter: null
     primary_objective: EXPLICIT_CAUSAL_SEQUENCE_MODELING
     access_profile: SOURCE_ONLY_LABEL_FREE
@@ -49,10 +51,10 @@ phase2:
     notebook: notebooks/P2.3_train_lightweight_sequence_expert.ipynb
   - id: GTAT_STRUCTURAL_TEMPORAL
     role: STRUCTURAL_TEMPORAL
-    status: SPECIFICATION_REQUIRED
+    status: RETAINED_NOT_ROBUST
     model: Temporal_Graph_Transformer_GTAT
     adapter: null
-    primary_objective: STRUCTURAL_TEMPORAL_SELF_SUPERVISION_TO_SPECIFY
+    primary_objective: MASKED_TARGET_TEMPORAL_STRUCTURAL_EVENT_NLL  # GTAT-ST-001, configs/models/gtat-v1.yaml
     access_profile: SOURCE_ONLY_LABEL_FREE
     data_view: graph
     training_task: P2.4
@@ -83,7 +85,7 @@ phase2:
     source_inputs: [SOURCE_VALIDATION]
     target_inputs: []
     anomaly_label_access: false
-    supervised_metrics_status: BLOCKED_PENDING_SOURCE_EVALUATION_SCOPE
+    supervised_metrics_status: SOURCE_VALIDATION_ONLY_UNDER_C2  # DIV-P2-001
     synthetic_control_truth: ALLOWED_ONLY_IN_ISOLATED_DIAGNOSTIC_EVALUATOR
     synthetic_results_are_natural_anomaly_results: false
     synthetic_controls_select_winner: false
@@ -236,17 +238,16 @@ phase2:
       name: Semantic Expert
       depends_on: [P2.PRE]
       old_tasks: [P2.2, P2.3, P2.4]
-      status: IMPLEMENTATION_READY
+      status: COMPLETE
       implementation_ready: true
-      training_completed: false
+      training_completed: true
       waiting_for_colab_run: false
       pilot_closeout: PASS
       pilot_run_id: PILOT-BGL-20260912-100258
       pilot_best_checkpoint: step-300
       final_protocol_frozen: true
-      final_training_status: NOT_STARTED
+      final_training_status: COMPLETE_SEED_42
       scientific_result: NOT_EVALUATED
-      next_task: P2.1-FINAL-COLAB-EXECUTION
       implementation_contract: docs/protocol/P2.1-semantic-expert.md
       implementation_config: configs/models/semantic-v1.yaml
       roadmap_update:
@@ -261,52 +262,107 @@ phase2:
             after: In progress
         gate_signature_created: false
     P2.2:
-      execution_authorized: false
-      blockers: [PREDECESSOR_NOT_COMPLETE]
+      execution_authorized: true
+      blockers: []
       name: Sequence Reference Framework
       depends_on: [P2.1]
       old_tasks: [P2.5, P2.6]
-      status: NOT_STARTED
+      status: COMPLETE
     P2.3:
-      execution_authorized: false
-      blockers: [PREDECESSOR_NOT_COMPLETE]
+      execution_authorized: true
+      blockers: []
       name: Lightweight Sequence Expert
       depends_on: [P2.2]
       old_tasks: []
-      status: NOT_STARTED
+      status: COMPLETE
     P2.4:
-      execution_authorized: false
-      blockers: [PREDECESSOR_NOT_COMPLETE, GTAT_SPECIFICATION_BEFORE_TRAINING]
+      execution_authorized: true
+      blockers: []
       name: GTAT Expert
       depends_on: [P2.3]
       old_tasks: [P2.7]
-      status: NOT_STARTED
+      status: COMPLETE
     P2.5:
-      execution_authorized: false
-      blockers: [PREDECESSOR_NOT_COMPLETE]
+      execution_authorized: true
+      blockers: []
       name: Common Evidence Contract
       depends_on: [P2.4]
       old_tasks: [P2.8]
-      status: NOT_STARTED
+      status: COMPLETE
     P2.6:
-      execution_authorized: false
-      blockers: [PREDECESSOR_NOT_COMPLETE, SOURCE_LABEL_SCOPE_FOR_SUPERVISED_METRICS]
+      execution_authorized: true
+      blockers: []
       name: Expert Diversity / Scientific Evaluation
       depends_on: [P2.5]
       old_tasks: []
-      status: NOT_STARTED
+      status: COMPLETE
     P2.7:
-      execution_authorized: false
-      blockers: [PREDECESSOR_NOT_COMPLETE, SOURCE_LABEL_SCOPE_FOR_SUPERVISED_METRICS]
+      execution_authorized: true
+      blockers: []
       name: Final Phase-2 Freeze
       depends_on: [P2.6]
       old_tasks: []
-      status: NOT_STARTED
+      status: COMPLETE
+      researcher_review: configs/protocols/p2-freeze-v1.yaml#p2_freeze.researcher_review
+      roadmap_update:
+        id: P2.7-STATUS-001
+        previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P2.1-in-progress.xlsx
+        previous_projection: docs/history/excel-roadmap--P2.1-in-progress.yaml
+        from_sha256: 154a69a1092605739bf1d4646399b120c00b09235c810798790297030d4873b4
+        to_sha256: ede0297f452495ea4b7ad3cfe4c948d351a188e57183ce57c8df77b055711a99
+        changed_cells:
+          Task Register!K14:
+            before: In progress
+            after: Done
+          Task Register!K15:
+            before: Not started
+            after: Done
+          Task Register!K16:
+            before: Not started
+            after: Done
+          Task Register!K17:
+            before: Not started
+            after: Done
+          Task Register!K18:
+            before: Not started
+            after: Done
+          Task Register!K19:
+            before: Not started
+            after: Done
+          Task Register!K20:
+            before: Not started
+            after: Done
+          Task Register!K21:
+            before: Waiting researcher
+            after: Ready
+          Gates!G7:
+            before: Not passed
+            after: Partial
+          Gates!H7:
+            before: —
+            after: configs/protocols/g2-signature.yaml
+          Roadmap!I6:
+            before: Planned
+            after: Finished
+          Executive!H4:
+            before: P1 COMPLETE — no empirical result
+            after: P2 COMPLETE (seed 42, P2-FREEZE-001) — no target result
+          Executive!H10:
+            before: Planned
+            after: Frozen (P2-FREEZE-001)
+          Executive!H11:
+            before: Planned
+            after: Frozen (P2-FREEZE-001)
+          Executive!H12:
+            before: Planned
+            after: Frozen (P2-FREEZE-001)
+        gate_signature_created: false
   migration_ledger: configs/protocols/phase2-roadmap-migration-v1.yaml
   base_freeze_contract: configs/models/base-freeze-v1.yaml
   source_label_blocker:
     id: C2
-    status: UNRESOLVED_DENY
+    status: RESOLVED_SOURCE_VALIDATION_DEVELOPMENT_AND_DIVERSITY
+    resolved_by: configs/protocols/c2-source-label-scope-v1.yaml
     blocks: [P2.6_SUPERVISED_METRICS, P2.7_REQUIRED_SCIENTIFIC_EVIDENCE, G2_REQUIRED_LABEL_BASED_EVIDENCE]
     training_or_selection_permission: false
     future_dependents: [P3.1_G2_HANDOFF, P3_LEARNED_FUSION_AFTER_G2]

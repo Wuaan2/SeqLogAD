@@ -8,4 +8,4 @@
 
 Tests that need local-only inputs (raw Loghub logs, Phase-1 artifacts under `data/processed/`, GPU
 libraries such as `torch`) skip with a reason, so a clean clone passes. Expected on a clean clone:
-423 passed, 53 skipped.
+435 passed, 54 skipped.

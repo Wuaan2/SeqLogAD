@@ -30,10 +30,9 @@ which criteria hold; it may not declare a gate passed.
 
 ## Current state
 
-`CURRENT_PHASE = P1_COMPLETE` · `G0 = PASSED` (signed 2026-09-06) ·
-`NEXT_AUTHORIZED_TASK = P2.1`; P2.PRE PASS after authenticated metadata verification;
-P2.1 execution_authorized=true; IMPLEMENTATION_READY, training NOT_STARTED ·
-`G1..G4 = NOT_PASSED` · `EXC-003` blocks G1 for the ARCH-HADOOP fold.
+`CURRENT_PHASE = P2_COMPLETE` · `G0 = PASSED` (signed 2026-09-06) · `G2 = PARTIAL` (signed 2026-11-22) ·
+`NEXT_AUTHORIZED_TASK = P3.1`; P2.PRE–P2.7 Done on seed 42, frozen as P2-FREEZE-001 ·
+`G1, G3, G4 = NOT_PASSED` · `EXC-003` blocks G1 for the ARCH-HADOOP fold.
 
 ## Retired routing
 
@@ -45,7 +44,6 @@ localization/fusion gates.
 
 Namespace: P2_ARCH_V1. Crosswalk and amendment ledger:
 `configs/protocols/phase2-roadmap-migration-v1.yaml`.
-P2.PRE must PASS before P2.1 execution can be authorized. Source-label C2 remains
-UNRESOLVED_DENY; supervised P2.6/P2.7 evidence and G2 depend on its resolution.
+Source-label C2 was resolved on 2026-11-22 (option A: source validation labels only).
 P3.1 consumes the P2.6/P2.7 handoff; it does not own duplicate diversity evaluation.
 Phase 3 remains disabled.

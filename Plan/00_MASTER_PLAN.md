@@ -9,8 +9,8 @@ definitions of done. Machine-readable projection:
 Where any plan document in this directory disagrees with the workbook, the workbook
 wins. See [`../docs/migration/EXCEL-PLAN-MIGRATION-001.md`](../docs/migration/EXCEL-PLAN-MIGRATION-001.md).
 
-Phase 1 is complete; G0 is `PROTOCOL_READY_PENDING_RESEARCHER_SIGNATURE`;
-`NEXT_AUTHORIZED_TASK = P2.1`.
+Phase 2 is complete (P2-FREEZE-001, seed 42); G0 = PASSED, G2 = PARTIAL;
+`NEXT_AUTHORIZED_TASK = P3.1`.
 
 ## Supporting implementation plan
 
