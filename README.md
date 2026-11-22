@@ -15,7 +15,7 @@ A research project testing **whether knowledge transfers across heterogeneous lo
 </div>
 
 > [!IMPORTANT]
-> The authoritative scientific plan is **`Bang_ke_hoach_SeqLogAD.xlsx`**. Phase 1 is complete and G0 passed. Phase 2 development (seed 42) is complete through P2.6: the four experts P2.1–P2.4 are trained, the common evidence contract P2.5 holds for all of them, and the diversity study P2.6 led the researcher to sign **G2 = PARTIAL** (2026-11-22). Under EXC-007 only HDFS and BGL are target folds. No target result exists yet; P2.7 (Phase-2 freeze) is next. The workbook registry still records `NEXT_AUTHORIZED_TASK = P2.1`, because P2.2–P2.6 ran under the seed-42 development amendment ([`phase2-development-s42-v1.yaml`](configs/protocols/phase2-development-s42-v1.yaml)); the workbook is updated at the P2.7 freeze.
+> The authoritative scientific plan is **`Bang_ke_hoach_SeqLogAD.xlsx`**. Phase 1 is complete and G0 passed. Phase 2 development (seed 42) is complete through P2.6: the four experts P2.1–P2.4 are trained, the common evidence contract P2.5 holds for all of them, and the diversity study P2.6 led the researcher to sign **G2 = PARTIAL** (2026-11-22). Under EXC-007 only HDFS and BGL are target folds. No target result exists yet. P2.7 froze the Phase-2 package (P2-FREEZE-001); the researcher accepted it on 2026-11-22, with the seed-42 runs as the Phase-2 deliverables (confirmation seeds deferred, no multi-seed stability claim). The workbook and the registry now record P2.PRE–P2.7 as Done and `NEXT_AUTHORIZED_TASK = P3.1` (held-out check); no other P3 task is authorized.
 
 ## The question
 
@@ -105,6 +105,7 @@ Each expert trains on Colab from the notebook in [`colab/`](colab/) and writes a
 | P2.4 | GTAT structural/temporal | Two-stream graph topology attention over ≤64 causal records; masked-target Δt, recurrence and event NLL | [P2.4 design](docs/protocol/P2.4-gtat-structural-temporal-expert.md) |
 | P2.5 | — | Common evidence envelope EVID-CS-001 and converters | [P2.5 contract](docs/protocol/P2.5-common-evidence-contract.md) |
 | P2.6 | — | Expert diversity on held-out source validation windows | [preregistration](docs/protocol/P2.6-expert-diversity-preregistration.md) · [report](docs/reports/DIV-P2-001.md) · [G2 record](configs/protocols/g2-signature.yaml) |
+| P2.7 | — | Phase-2 freeze: hashed artifacts, dispositions, entry points, limitations | [freeze packet](docs/protocol/P2.7-phase2-freeze.md) · [manifest](configs/protocols/p2-freeze-v1.yaml) |
 
 P2.6 summary: P2.3 matches P2.2 at 0.46% of its parameters ([comparison](docs/reports/P2.3-vs-P2.2-sequence-comparison.md)). In the HDFS fold, combining P2.3 or P2.4 with P2.2 raised AP; in the BGL fold no expert added evidence. The P2.4 gain is not robust to duplicated log lines ([review](docs/reports/DIV-P2-001-review.md)). G2 is therefore PARTIAL: learned fusion stays closed and equal-weight fusion remains the comparator.
 
