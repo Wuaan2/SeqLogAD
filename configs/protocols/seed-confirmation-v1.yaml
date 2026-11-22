@@ -1,0 +1,51 @@
+# SEED-CONFIRM-001: preregistered before any confirmation run. Seed 42 stays the primary seed for every
+# decision and every Phase-3 input; seeds 3407 and 8675309 only report how stable the Phase-2 findings are.
+# Human-readable version: docs/protocol/SEED-CONFIRM-001-seed-confirmation.md
+seed_confirmation:
+  id: SEED-CONFIRM-001
+  version: '1.0'
+  status: PREREGISTERED
+  preregistered_on: '2026-11-22'
+  requested_by: RESEARCHER  # working-session instruction; the agent signs nothing
+  primary_seed: 42
+  confirmation_seeds: [3407, 8675309]  # the seeds deferred by configs/protocols/phase2-development-s42-v1.yaml
+  selection_seed: 42
+  frozen_reference: configs/protocols/p2-freeze-v1.yaml  # P2-FREEZE-001 is not changed by this protocol
+  code: src/seqlogad/seeds  # new code; the seed-42 modules are reused unchanged
+
+  runs:
+    P2.1: {retrain: true, rule: "frozen P2.1 final protocol (semantic-v1.yaml lists seeds 42, 3407, 8675309); label-free selection"}
+    P2.2: {retrain: true, rule: "V13R1 config with only the training seed changed"}
+    P2.3: {retrain: true, rule: "LIGHT-SEQ-001 config with only the training seed changed"}
+    P2.4: {retrain: true, rule: "GTAT-ST-001 config with only the training seed changed"}
+    P2.5: {retrain: false, rule: "EVID-CS-001 unchanged; the P2.6 scoring pass writes the envelopes"}
+    P2.6: {retrain: false, rule: "score each seed's selected checkpoints on the DIV-P2-001 held-out windows, then rerun the DIV-P2-001 analysis unchanged"}
+
+  held_fixed:
+    - data bundles, label sidecar and graph view (P2-FREEZE-001 artifacts)
+    - expert configs except the training seed
+    - checkpoint-selection windows (seed 42) and selection rule for P2.2-P2.4
+    - step budget, early stopping and precision
+    - P2.6 held-out windows, comparators, metrics, alarm budget, bootstrap (2000 replicates, seed 42) and verdict rule
+  varies_with_seed:
+    - weight initialisation, dropout and data order
+    - training-window sampling (with replacement)
+    - P2.1 masking and its label-free validation records (its own frozen protocol)
+
+  reporting:
+    per_seed: [AP, AUROC, FAR@R0.5, FAR@R0.8, selected checkpoint, DIV-P2-001 verdict per pair]
+    across_seeds: [mean, min, max over the 3 seeds]
+    key_findings:
+      - P2.2 vs P2.3 paired AP difference per fold
+      - P2.2+P2.3 ADDS_EVIDENCE in the HDFS fold
+      - P2.4 gain not robust
+      - no expert adds evidence in the BGL fold
+    seed_stable_rule: a finding is called seed-stable only if it holds in all three seeds (42, 3407, 8675309)
+    failed_or_missing_run: reported as missing; never replaced by another seed
+    location: docs/reports/SEED-CONFIRM-001.md (written only after all runs finish)
+
+  forbidden:
+    - changing P2-FREEZE-001 dispositions, selected checkpoints or the G2 decision because of these runs
+    - choosing a best seed or averaging weights across seeds
+    - feeding confirmation-seed results into any Phase-3 choice
+    - reading target labels
