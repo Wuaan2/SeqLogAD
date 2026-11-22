@@ -1,0 +1,33 @@
+# P3.1 Held-out check: G2 handoff verification (G2-HANDOFF-001). Recorded by the coding agent, which verifies
+# and signs nothing. Verification only: no evaluation rerun, no scoring, no target label read, no fusion.
+# Re-run: python scripts/verify_g2_handoff.py --root <project root>   (without --root: repository-side checks only)
+g2_handoff:
+  id: G2-HANDOFF-001
+  version: '1.0'
+  task: P3.1
+  verified_on: '2026-11-22'
+  verified_by: CODING_AGENT
+  status: VERIFIED_AWAITING_RESEARCHER_ACCEPTANCE
+  gate_signature_created: false
+  inputs:
+    freeze: {path: configs/protocols/p2-freeze-v1.yaml, sha256_lf: 7edbad2d17ece69ec28a0ff931eb524e8029319ee89aa38ac0b92be8913fc6cb}
+    g2_record: {path: configs/protocols/g2-signature.yaml, sha256_lf: a8cf03da356b2c4a3ebdf50e26aa93a963d38a2cc6e597bd1aa9e36618a4b0fb}
+    verifier: src/seqlogad/handoff.py
+  result:
+    g2_record: {checks: 10, failed: 0}  # decision, signer, frozen record, basis files and hashes, evidence ZIP, P3 closed
+    p2_freeze_001: {checks: 99, failed: 0}  # every artifact, inner manifest, target ZIP, checkpoint and envelope
+  g2_state: PARTIAL
+  findings:
+    G2_RECORD_IS_A_TRANSCRIBED_DECISION: >-
+      The G2 record transcribes the researcher's decision given in the project chat; it carries no cryptographic
+      signature. This check proves the record's integrity and consistency, not who made the decision.
+    G2_REPORT_HASHES_DEPEND_ON_LINE_ENDINGS: >-
+      The G2 record hashes docs/reports/DIV-P2-001.md (3315c116...) and DIV-P2-001.json (7af1b8bf...) as CRLF bytes
+      from a Windows checkout; git stores them as LF (da608fa7..., b5198ae9..., the P2-FREEZE-001 digests). The CRLF
+      rendering of the frozen LF text reproduces both signed digests exactly, so the signed text is the frozen text.
+      A plain SHA-256 of a fresh LF checkout will not match the G2 record; use this verifier.
+  phase3:
+    authorized_tasks: [P3.1]
+    next_tasks_require: RESEARCHER_AUTHORIZATION  # P3.2 onwards stay closed until the researcher opens them
+    learned_fusion: CLOSED_G2_NOT_PASSED
+    equal_weight_fusion: MANDATORY_COMPARATOR
