@@ -1,0 +1,30 @@
+# ADAPT-MEM-001 statistics component (P3.2, CPU part). Recorded by the coding agent after the build; it
+# signs nothing. The component lives outside git under the storage path below; this file binds its hashes.
+# Re-check: seqlogad.memory.build.load_component(<root>, <fold_id>, 'statistics') re-hashes every file.
+adapt_mem_statistics:
+  memory: ADAPT-MEM-001
+  component: statistics
+  built_on: '2026-11-22'
+  storage: data/processed/memory/ADAPT-MEM-001/<fold_id>/statistics/
+  buffers_match_g0: true
+  target_labels_read: false
+  records_outside_buffer_read: false
+  prototypes: PENDING_GPU
+  fold_memory_frozen: false
+  folds:
+    FOLD-TARGET-ARCH-HDFS:
+      memory_key: ADAPT-MEM-001/ARCH-HDFS/43a505f171d943be123eadf985ac345b11ae1f6767a1b6caccd31864c7fa3899
+      component_json_sha256: 3bf0eca1588bbfe2f40a94c99dfe7aea5999762f08e65d1e41e53b201749feb2
+      contract_sha256: a651c8217716a87b0ac3d4f424c481a73bbb0de76f17e487278ea37a9dc590b2
+      builder_sha256: 87412a52f9a5130a2e274f11bd278835b41c089d0e0b673fb48ef9df44c5739d
+      counts: {"buffer_records": 4746575, "distinct_events": 11196, "distinct_transitions": 31429, "eligible_windows": 4530937, "events": 245830, "transition_pairs": 4530937, "windows": 32768}
+      graph: {"abstain": 0, "nodes": 393522, "scored": 32768, "windows": 32768}
+      files: {"events.parquet": "bb117880363d3085b3a84b24ed74cbfc48397aa3496257972a94ad4d76c961c1", "graphs.parquet": "1350a966302d67bd9bb1e82e1e5b5cbcad75f79a64a558ec1595afc6abbb5afe", "node_attributes.parquet": "fa402554a444f16f49bec853fd45ed02eb56e1fd17065d595c91247d72352f62", "nodes.parquet": "f9ccb55b01eb33822e9b50f7130e69f9a1ada926f4c4f91281cd06566430d6b7", "transitions.parquet": "4c570b4daf30ab357167520f92f498976191a6f59d9b110b8f1f423c5fe59f94", "unigrams.parquet": "552f281733d7d7d02067d5a4c032b11802617190140b436caf0f51f4fbc31c11", "windows.parquet": "202b7f9e7d6049b79e90fa0da81b267e9b86eb9cdadd1c19a2557fe618bf9294"}
+    FOLD-TARGET-ARCH-BGL:
+      memory_key: ADAPT-MEM-001/ARCH-BGL/130989c60952161a3e606ca969f6343a036209fd89d6ff06cde2885ee4dad914
+      component_json_sha256: 7c3e79b89c4fc3338982b5a228a6abfcea45002515ff91cbe43570cacbe23df2
+      contract_sha256: a651c8217716a87b0ac3d4f424c481a73bbb0de76f17e487278ea37a9dc590b2
+      builder_sha256: 87412a52f9a5130a2e274f11bd278835b41c089d0e0b673fb48ef9df44c5739d
+      counts: {"buffer_records": 2373981, "distinct_events": 2133, "distinct_transitions": 5174, "eligible_windows": 2373980, "events": 278779, "transition_pairs": 2373980, "windows": 32768}
+      graph: {"abstain": 3, "nodes": 1406990, "scored": 32765, "windows": 32768}
+      files: {"events.parquet": "986653401f722ddb6641ce1d55bfa2da4be0f632baaec44013a23cad7f9cc8b5", "graphs.parquet": "0ee3057cb6a82b2d3dbb909895003cfb67926cd32a503fc8cb4df45a2138fc81", "node_attributes.parquet": "33edc3ffa0997ce2d8b7049807ca222a1995795097f1c2b66b59df8f8d6d7897", "nodes.parquet": "c487ce0d9e135bc1c75973c5d76c218a1970e0e21d018d10959cd2672f601456", "transitions.parquet": "b4d6e9304bd95bba4f94fbc707314825d0708994e27fc92dc11f1c5e1492d007", "unigrams.parquet": "7d788b6e505980748035be50efb354eefa7fafc223feaf54f97868d34986bfc9", "windows.parquet": "69af4907430c169db04d97006e636299b943da7d5eb876542e68810f67f6c520"}

@@ -1,0 +1,74 @@
+# ADAPT-MEM-001 (P3.2) target normal memory. Declared before any memory is built; nothing here is derived
+# from a target label, a target evaluation record or a model score.
+# Build: python scripts/build_target_memory.py --project-root <root holding configs/ and data/>
+adapt_mem:
+  id: ADAPT-MEM-001
+  version: '1.0'
+  task: P3.2
+  status: PREREGISTERED
+  authorized_by: RESEARCHER  # project chat, 2026-11-22
+  authorized_on: '2026-11-22'
+  roadmap_update:
+    id: P3.2-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.1-done.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.1-done.yaml
+    from_sha256: 24c56f54c96e0a9dd94dc635eea2576b7d0d7a3d8b8e9407b1d6ce05bec52b74
+    to_sha256: 92c5a91a5c068b02b59aaa84ce7d74056f15d031b18770014261079216a27d37
+    changed_cells:
+      Task Register!K22: {before: Waiting researcher, after: In progress}
+    gate_signature_created: false
+  buffer_contract: configs/protocols/target-buffer-v1.yaml  # ADAPT-INPUT-001, signed at G0
+  partition: TARGET_BURN_IN  # the EARLY stream segment of the target; no other record is read
+
+  # G0-era identities of the approved buffers (P1.6), copied from the P2 bundle lineage that bound them
+  # (phase2-sequence-s42.zip fold.json and lineage.json). The rebuilt buffer must match every value.
+  # stream-index.json carries scan_seconds, so its own SHA-256 cannot be reproduced and is not pinned.
+  buffers:
+    FOLD-TARGET-ARCH-HDFS:
+      target_architecture: ARCH-HDFS
+      buffer_id: BUFFER-ARCH-HDFS
+      records: 4746575
+      membership_sha256: 43a505f171d943be123eadf985ac345b11ae1f6767a1b6caccd31864c7fa3899
+      distinct_normalized_messages: 11196
+      first_timestamp_utc: '2008-11-09T20:35:18+00:00'
+      last_timestamp_utc: '2008-11-10T22:44:38+00:00'
+      raw_sha256: [0783096174d7832c618337f9609e06e04abd86ddd7089b3c12b407e63bfebc52]
+    FOLD-TARGET-ARCH-BGL:
+      target_architecture: ARCH-BGL
+      buffer_id: BUFFER-ARCH-BGL
+      records: 2373981
+      membership_sha256: 130989c60952161a3e606ca969f6343a036209fd89d6ff06cde2885ee4dad914
+      distinct_normalized_messages: 2133
+      first_timestamp_utc: '2005-06-03T15:42:50.363779+00:00'
+      last_timestamp_utc: '2005-07-17T04:26:47.157764+00:00'
+      raw_sha256: [666130b15ef44eb32fd02bd053e6c6e007c37696b5e7e8b9d8e45b729876a5d2]
+  normalizer_rule_file_sha256: 305a2fa2ef1028d4828a24688ac75a279961f0c5fc9fcf93e70b12b75f5cb7f0
+
+  components:
+    transitions:
+      records: ALL_BUFFER_RECORDS
+      event: norm_h  # 64-bit hash of the NORM-CS-001 normalized message, as in the Phase-1 stream
+      order: 1
+      grouping: GROUP_WHEN_AVAILABLE_ELSE_GLOBAL_CHRONOLOGY  # the P2.2 context rule; resets at every group
+      outputs: [unigrams, transitions]
+    windows:
+      selection: LOWEST_SHA256_OF_FOLD_INDEPENDENT_ARCH_PARTITION_TARGET_RANK  # P2.2 rule, partition TARGET_BURN_IN
+      limit: 32768  # P2.2 train_candidate_windows_per_source
+      max_predecessor_records: 8
+      outputs: [windows, events]
+    graph_statistics:
+      view: configs/models/gtat-v1.yaml#gtat.graph_view  # the P2.4 graph builder, unchanged
+      windows: SAME_AS_WINDOWS
+      outputs: [graphs, nodes, node_attributes]
+    prototypes:
+      status: PENDING_GPU  # computed on Colab from the windows above, then the fold memory is frozen
+      experts: [SEMANTIC_LLAMA, SEQUENCE_LLAMA_REFERENCE, SEQUENCE_LIGHTWEIGHT, GTAT_STRUCTURAL_TEMPORAL]
+
+  key: ADAPT-MEM-001/<target_architecture>/<buffer membership_sha256>
+  storage: data/processed/memory/ADAPT-MEM-001/<fold_id>/<component>/  # each component written once, read-only
+  freeze: FOLD_MEMORY_JSON_WRITTEN_LAST_BINDS_EVERY_COMPONENT_HASH  # after prototypes; evaluation never writes
+  forbidden:
+    - reading any target label file or label column
+    - reading any target record outside TARGET_BURN_IN
+    - selecting, weighting or filtering buffer records by a model score or an evaluation outcome
+    - rebuilding or editing a component after it is written; a change is a new memory version

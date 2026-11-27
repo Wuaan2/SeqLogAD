@@ -1,0 +1,44 @@
+# ADAPT-MEM-001 prototypes and buffer scores (P3.2, GPU part). Declared before any expert reads a burn-in window.
+# Extends configs/protocols/adapt-mem-v1.yaml (components.prototypes) without editing it: that file is bound by the
+# statistics component's hash. Label-free: only the statistics component of the approved buffer is read.
+adapt_mem_prototypes:
+  id: ADAPT-MEM-001-PROTOTYPES
+  version: '1.0'
+  task: P3.2
+  status: PREREGISTERED
+  decided_by: RESEARCHER  # project chat, 2026-11-27: also keep the buffer scores for P3.3
+  decided_on: '2026-11-27'
+  memory_contract: configs/protocols/adapt-mem-v1.yaml
+  statistics_receipt: configs/protocols/adapt-mem-statistics-v1.yaml
+  folds: [FOLD-TARGET-ARCH-HDFS, FOLD-TARGET-ARCH-BGL]
+
+  windows:
+    source: statistics/windows.parquet  # the 32,768 TARGET_BURN_IN windows per fold
+    selection: LOWEST_P2.2_CANDIDATE_SCORE  # same hash rule as the statistics windows, so a nested subset
+    limit: 8192  # per fold; ~3.4 GPU hours on an L4 for P2.1-P2.3 at the P2.6 speeds (0.22/0.37/0.15 s per window)
+
+  experts:  # selected checkpoints of P2-FREEZE-001, seed 42; each must reproduce its stored sanity score first
+    P2.1: {expert_id: SEMANTIC_LLAMA, input: TARGET_MESSAGE, embedding: LAST_TOKEN_HIDDEN_STATE}
+    P2.2: {expert_id: SEQUENCE_LLAMA_REFERENCE, input: WINDOW, embedding: LAST_TOKEN_HIDDEN_STATE}
+    P2.3: {expert_id: SEQUENCE_LIGHTWEIGHT, input: WINDOW, embedding: LAST_TOKEN_HIDDEN_STATE}
+    P2.4: {expert_id: GTAT_STRUCTURAL_TEMPORAL, input: GRAPH, embedding: READOUT_VECTOR}
+  embedding_definition:
+    LAST_TOKEN_HIDDEN_STATE: final-layer hidden state at the last input token (the input of the LM head), one forward per window
+    READOUT_VECTOR: output of the GTAT readout layer for the masked target node
+  scores: RAW_EVID_CS_001_ENVELOPES  # P2.6 scorers unchanged; uncalibrated. P3.3 calibrates them only once authorized.
+
+  prototypes:
+    normalize: L2
+    method: KMEANS
+    k: 64
+    seed: 42
+    n_init: 4
+    outputs: [centroids, cluster_sizes, window_assignment_and_cosine_distance]
+  components:
+    prototypes: {tables: [centroids, assignments]}
+    buffer_scores: {tables: [scores]}  # one row per window and expert: score_raw, status, coverage
+  freeze: MEMORY_JSON_BINDS_STATISTICS_PROTOTYPES_AND_BUFFER_SCORES
+  forbidden:
+    - reading any target label or any record outside TARGET_BURN_IN
+    - choosing windows, k or the embedding by looking at scores or evaluation results
+    - calibrating, thresholding or fusing the buffer scores inside P3.2
