@@ -53,7 +53,7 @@ def test_unique_ids_and_exact_linear_order_across_authorities():
     for task in roadmap["tasks"]:
         assert set(task["dependencies"]) <= set(ids)
     for path in (".ai/task-routing.md", ".ai/primary-context.md", "README.md"):
-        assert "NEXT_AUTHORIZED_TASK = P3.1" in (ROOT / path).read_text(encoding="utf-8")
+        assert "NEXT_AUTHORIZED_TASK = P3.2" in (ROOT / path).read_text(encoding="utf-8")
     routing = (ROOT / ".ai/task-routing.md").read_text()
     assert " → ".join(ORDER) in routing
 
@@ -177,7 +177,7 @@ def test_base_prerequisite_pass_is_metadata_only():
     assert base["future_runtime_preflight"]["owner"] == "P2.1"
     assert base["future_runtime_preflight"]["executed"] is False
     state = read("configs/active-state.yaml")["active_state"]
-    assert state["next_authorized_task"] == "P3.1"
+    assert state["next_authorized_task"] == "P3.2"
     assert state["semantic_execution_authorized"] is True
     assert state["phase3_enabled"] is False
     assert P2["tasks"]["P2.1"]["execution_authorized"] is True

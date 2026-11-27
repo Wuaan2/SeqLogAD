@@ -2,7 +2,7 @@ roadmap:
   schema_version: '1.0'
   authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
   source_workbook: Bang_ke_hoach_SeqLogAD.xlsx
-  source_workbook_sha256: ede0297f452495ea4b7ad3cfe4c948d351a188e57183ce57c8df77b055711a99
+  source_workbook_sha256: 92c5a91a5c068b02b59aaa84ce7d74056f15d031b18770014261079216a27d37
   worksheets:
   - Executive
   - Roadmap
@@ -635,7 +635,7 @@ roadmap:
     - P2.7
     definition_of_done: P2.6 evidence hashes and researcher G2 signature verified; Phase 3 remains disabled
       before approval.
-    workbook_status: Ready
+    workbook_status: Done
     playbook:
       method: Verify P2.6 diagnostic artifacts and P2.7 package hashes; confirm researcher G2 signature
         before integration. Do not duplicate source evaluation or use target labels for tuning.
@@ -657,7 +657,7 @@ roadmap:
     - P1.6
     - P2.7
     definition_of_done: Memory only uses approved unlabeled buffer; hash/version recorded.
-    workbook_status: Not started
+    workbook_status: In progress
     playbook:
       method: '1) Từ burn-in đã duyệt, xây prototype embedding, transition counts và graph statistics.
 

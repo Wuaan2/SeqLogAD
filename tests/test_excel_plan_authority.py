@@ -95,7 +95,7 @@ def test_g0_required_evidence_is_recorded_verbatim(roadmap: dict) -> None:
 def test_active_state_routes_the_workbook_and_nothing_else() -> None:
     state = _yaml("configs/active-state.yaml")["active_state"]
     assert state["authoritative_plan"]["path"] == "Bang_ke_hoach_SeqLogAD.xlsx"
-    assert state["next_authorized_task"] == "P3.1"
+    assert state["next_authorized_task"] == "P3.2"
     for pointer in RETIRED_POINTERS:
         assert pointer in state["historical_foundation"]["retired_pointers"]
 
@@ -133,8 +133,8 @@ def test_next_authorized_task_is_the_first_unfinished_workbook_task(roadmap: dic
     assert first["task_id"] == "P2.PRE"
     assert all(t["workbook_status"] == "Done" for t in phase_2)
     pending = next(t for t in roadmap["tasks"] if t["workbook_status"] != "Done")
-    assert state["next_authorized_task"] == pending["task_id"] == "P3.1"
-    assert pending["workbook_status"] == "Ready"
+    assert state["next_authorized_task"] == pending["task_id"] == "P3.2"
+    assert pending["workbook_status"] == "In progress"
     assert first["output"] == "LLM-BASE-001"
     assert first["dependencies"] == ["P1.8"]
 

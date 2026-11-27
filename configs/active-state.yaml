@@ -1,11 +1,11 @@
 active_state:
   id: ACTIVE-STATE-G0-SIGNED-001
-  version: '3.3'
+  version: '3.5'
   status: SYNCHRONIZED
-  synchronized_by: P2.7-STATUS-001
+  synchronized_by: P3.2-STATUS-001
   authoritative_plan:
     path: Bang_ke_hoach_SeqLogAD.xlsx
-    sha256: ede0297f452495ea4b7ad3cfe4c948d351a188e57183ce57c8df77b055711a99
+    sha256: 92c5a91a5c068b02b59aaa84ce7d74056f15d031b18770014261079216a27d37
     authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
     machine_readable_projection: configs/plan/excel-roadmap-v1.yaml
     regenerate_with: python scripts/extract_excel_roadmap.py
@@ -24,6 +24,8 @@ active_state:
     base_freeze_status_update: configs/models/base-freeze-v1.yaml#base_freeze.completion_status_update
     semantic_status_update: configs/protocols/phase2-architecture-v1.yaml#phase2.tasks.P2.1.roadmap_update
     phase2_completion_status_update: configs/protocols/phase2-architecture-v1.yaml#phase2.tasks.P2.7.roadmap_update
+    p3_1_status_update: configs/protocols/p3.1-g2-handoff-v1.yaml#g2_handoff.roadmap_update
+    p3_2_status_update: configs/protocols/adapt-mem-v1.yaml#adapt_mem.roadmap_update
   implementation_contract:
     id: DOMAIN-ADAPTIVE-FUSION-001
     version: '2.0'
@@ -47,14 +49,14 @@ active_state:
     G3: NOT_PASSED
     G4: NOT_PASSED
   g0_receipt: data/processed/protocol/G0-receipt.json
-  next_authorized_task: P3.1
-  next_authorized_task_name: Held-out check
+  next_authorized_task: P3.2
+  next_authorized_task_name: Target memory
   next_authorized_task_blocked_by: []
   scientific_results_status: NOT_RUN  # no target result; DIV-P2-001 is a source-side diagnostic
   representation_training_status: COMPLETE_SEED_42
   phase2_freeze: configs/protocols/p2-freeze-v1.yaml
-  g2_handoff: configs/protocols/p3.1-g2-handoff-v1.yaml  # P3.1 verified 2026-11-22; awaiting researcher acceptance
-  target_adaptation_status: NOT_STARTED
+  g2_handoff: configs/protocols/p3.1-g2-handoff-v1.yaml  # P3.1 Done: verified and accepted by the researcher on 2026-11-22
+  target_adaptation_status: P3.2_IN_PROGRESS  # ADAPT-MEM-001, configs/protocols/adapt-mem-v1.yaml
   phase_1_artifacts:
     dataset_registry: data/registry/dataset_registry.json
     stream_indices: data/processed/protocol/streams/
@@ -107,7 +109,7 @@ active_state:
       Also depends on P3.2-P3.5.
     G2: Expert Diversity. PARTIAL, signed by the researcher on 2026-11-22 (DIV-P2-001); equal-weight fusion is the
       mandatory comparator.
-  next_authorized_task_status: READY  # authorized by the researcher on 2026-11-22; other P3 tasks stay closed
+  next_authorized_task_status: IN_PROGRESS  # authorized by the researcher on 2026-11-22; P3.3 onwards stay closed
   researcher_signatures:
     ledger: configs/protocols/g0-signatures.yaml
     signed_on: '2026-09-06'
