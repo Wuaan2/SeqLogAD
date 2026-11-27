@@ -7,8 +7,24 @@ g2_handoff:
   task: P3.1
   verified_on: '2026-11-22'
   verified_by: CODING_AGENT
-  status: VERIFIED_AWAITING_RESEARCHER_ACCEPTANCE
+  status: ACCEPTED_BY_RESEARCHER
   gate_signature_created: false
+  # Recorded from the researcher's instruction in the working session; the agent signs nothing.
+  researcher_review:
+    decided_by: RESEARCHER
+    decided_on: '2026-11-22'
+    disposition: P3.1_ACCEPTED_AS_DONE
+    p3_authorized_tasks: []  # P3.2 onwards wait for the researcher's own authorization
+  roadmap_update:
+    id: P3.1-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P2-complete.xlsx
+    previous_projection: docs/history/excel-roadmap--P2-complete.yaml
+    from_sha256: ede0297f452495ea4b7ad3cfe4c948d351a188e57183ce57c8df77b055711a99
+    to_sha256: 24c56f54c96e0a9dd94dc635eea2576b7d0d7a3d8b8e9407b1d6ce05bec52b74
+    changed_cells:
+      Task Register!K21: {before: Ready, after: Done}
+      Task Register!K22: {before: Not started, after: Waiting researcher}
+    gate_signature_created: false
   inputs:
     freeze: {path: configs/protocols/p2-freeze-v1.yaml, sha256_lf: 7edbad2d17ece69ec28a0ff931eb524e8029319ee89aa38ac0b92be8913fc6cb}
     g2_record: {path: configs/protocols/g2-signature.yaml, sha256_lf: a8cf03da356b2c4a3ebdf50e26aa93a963d38a2cc6e597bd1aa9e36618a4b0fb}
@@ -27,7 +43,7 @@ g2_handoff:
       rendering of the frozen LF text reproduces both signed digests exactly, so the signed text is the frozen text.
       A plain SHA-256 of a fresh LF checkout will not match the G2 record; use this verifier.
   phase3:
-    authorized_tasks: [P3.1]
+    authorized_tasks: [P3.1]  # at verification time
     next_tasks_require: RESEARCHER_AUTHORIZATION  # P3.2 onwards stay closed until the researcher opens them
     learned_fusion: CLOSED_G2_NOT_PASSED
     equal_weight_fusion: MANDATORY_COMPARATOR
