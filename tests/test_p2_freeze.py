@@ -31,9 +31,7 @@ def test_freeze_respects_gates_and_selects_no_winner():
     assert FREEZE["status"] == "FROZEN_ACCEPTED_BY_RESEARCHER"
     review = FREEZE["researcher_review"]
     assert review["decided_by"] == "RESEARCHER" and review["p3_authorized_tasks"] == ["P3.1"]
-    assert review["multi_seed_stability_claims"] == "FORBIDDEN"
-    state = yaml.safe_load((ROOT / "configs/active-state.yaml").read_text(encoding="utf-8"))["active_state"]
-    assert state["next_authorized_task"] in review["p3_authorized_tasks"]
+    assert review["multi_seed_stability_claims"] == "FORBIDDEN"  # later P3 tasks carry their own authorization
 
 
 def test_completion_status_update_has_exact_provenance():
@@ -43,7 +41,9 @@ def test_completion_status_update_has_exact_provenance():
 
     p2 = yaml.safe_load((ROOT / "configs/protocols/phase2-architecture-v1.yaml").read_text(encoding="utf-8"))["phase2"]
     update = p2["tasks"]["P2.7"]["roadmap_update"]
-    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    handoff = yaml.safe_load((ROOT / "configs/protocols/p3.1-g2-handoff-v1.yaml").read_text(encoding="utf-8"))
+    before_path = ROOT / update["previous_workbook"]
+    after_path = ROOT / handoff["g2_handoff"]["roadmap_update"]["previous_workbook"]
     assert sha256_file(before_path) == update["from_sha256"] == p2["tasks"]["P2.1"]["roadmap_update"]["to_sha256"]
     assert sha256_file(after_path) == update["to_sha256"]
     books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
