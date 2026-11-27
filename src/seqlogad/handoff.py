@@ -50,9 +50,8 @@ def verify_g2_handoff(repo_root, project_root=None, deep=True):
               and freeze["repo_files"].get(path) == lf_digest(data), f"{path}: signed text is the frozen text")
     evidence = freeze["artifacts"][freeze["evidence_checks"]["zip"]]
     check("g2:evidence_zip", basis["evidence_zip_sha256"] == evidence["sha256"], evidence["path"])
-    check("p3:closed_at_handoff", state["next_authorized_task"] == "P3.1" and state["target_adaptation_status"]
-          == "NOT_STARTED" and freeze["researcher_review"]["p3_authorized_tasks"] == ["P3.1"],
-          "only P3.1 is authorized; no target adaptation has started")
+    check("p3:closed_at_handoff", freeze["researcher_review"]["p3_authorized_tasks"] == ["P3.1"]
+          and state["gates"]["G2"] != "PASSED", "P2.7 authorized only P3.1; learned fusion stays closed")
     if project_root is not None:
         results += verify(repo_root, project_root, deep=deep)
     return results
