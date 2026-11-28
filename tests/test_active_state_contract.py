@@ -89,7 +89,7 @@ def test_active_status_next_task_test_state_and_license_are_exact() -> None:
     assert default["pipeline"]["next_authorized_task"] == "P3.6"
     assert state["scientific_results_status"] == "NOT_RUN"
     assert state["representation_training_status"] == "COMPLETE_SEED_42"
-    assert state["target_adaptation_status"] == "P3.5_DONE"
+    assert state["target_adaptation_status"] == "P3.6_IN_PROGRESS"
 
     historical = state["historical_foundation"]
     assert historical["status"] == "SUPERSEDED_HISTORICAL_PROVENANCE"

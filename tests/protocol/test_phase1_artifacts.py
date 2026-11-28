@@ -417,13 +417,13 @@ def test_active_state_mirrors_the_receipt_and_cannot_overstate_it(receipt: dict)
     assert state["next_authorized_task"] == "P3.6"  # the receipt keeps its historical routing
     assert state["scientific_results_status"] == receipt["empirical_status"] == "NOT_RUN"
     assert state["representation_training_status"] == "COMPLETE_SEED_42"
-    assert state["target_adaptation_status"] == "P3.5_DONE"
+    assert state["target_adaptation_status"] == "P3.6_IN_PROGRESS"
 
     # G2 carries the researcher's PARTIAL signature; the other later gates stay closed.
     for gate in ("G1", "G3", "G4"):
         assert state["gates"][gate] == "NOT_PASSED"
     assert state["gates"]["G2"] == "PARTIAL"
-    assert state["next_authorized_task_status"] == "WAITING_RESEARCHER"
+    assert state["next_authorized_task_status"] == "IN_PROGRESS"
 
     # The open exceptions survive the signature.
     assert "EXC-003" in state["open_items_after_g0"]

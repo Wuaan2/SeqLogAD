@@ -134,7 +134,7 @@ def test_next_authorized_task_is_the_first_unfinished_workbook_task(roadmap: dic
     assert all(t["workbook_status"] == "Done" for t in phase_2)
     pending = next(t for t in roadmap["tasks"] if t["workbook_status"] != "Done")
     assert state["next_authorized_task"] == pending["task_id"] == "P3.6"
-    assert pending["workbook_status"] == "Waiting researcher"
+    assert pending["workbook_status"] == "In progress"
     assert first["output"] == "LLM-BASE-001"
     assert first["dependencies"] == ["P1.8"]
 
