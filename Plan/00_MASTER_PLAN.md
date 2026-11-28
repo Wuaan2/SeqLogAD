@@ -10,8 +10,8 @@ Where any plan document in this directory disagrees with the workbook, the workb
 wins. See [`../docs/migration/EXCEL-PLAN-MIGRATION-001.md`](../docs/migration/EXCEL-PLAN-MIGRATION-001.md).
 
 Phase 2 is complete (P2-FREEZE-001, seed 42); G0 = PASSED, G2 = PARTIAL;
-`NEXT_AUTHORIZED_TASK = P3.2` (in progress, ADAPT-MEM-001); P3.1 Done; P3.3 and P3.4 preregistered
-(CAL-CS-001, DRIFT-CS-001), run after the P3.2 memory is frozen.
+`NEXT_AUTHORIZED_TASK = P3.6` (waiting researcher, FUS-BASE-001); P3.1–P3.5 Done (ADAPT-MEM-001, CAL-CS-001,
+DRIFT-CS-001, UNC-CS-001; receipts `configs/protocols/p3.2-p3.4-receipt-v1.yaml`, `configs/protocols/p3.5-receipt-v1.yaml`).
 
 ## Supporting implementation plan
 
