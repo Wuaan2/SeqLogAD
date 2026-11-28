@@ -1,11 +1,11 @@
 active_state:
   id: ACTIVE-STATE-G0-SIGNED-001
-  version: '3.9'
+  version: '3.10'
   status: SYNCHRONIZED
-  synchronized_by: P3.5-DONE-STATUS-001
+  synchronized_by: P3.6-STATUS-001
   authoritative_plan:
     path: Bang_ke_hoach_SeqLogAD.xlsx
-    sha256: bb534f32f06132549fc351441412fa989116ed45ace99f9c78e411d1a57b3f9e
+    sha256: f14bb227f54766d0b9b21f9956e799ec9440534b6204f2a7ff473a96da094280
     authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
     machine_readable_projection: configs/plan/excel-roadmap-v1.yaml
     regenerate_with: python scripts/extract_excel_roadmap.py
@@ -30,6 +30,7 @@ active_state:
     p3_2_p3_4_completion_status_update: configs/protocols/p3.2-p3.4-receipt-v1.yaml#adaptation_receipt.roadmap_update
     p3_5_status_update: configs/protocols/unc-cs-v1.yaml#unc_cs.roadmap_update
     p3_5_completion_status_update: configs/protocols/p3.5-receipt-v1.yaml#unc_receipt.roadmap_update
+    p3_6_status_update: configs/protocols/fus-base-v1.yaml#fus_base.roadmap_update
   implementation_contract:
     id: DOMAIN-ADAPTIVE-FUSION-001
     version: '2.0'
@@ -60,13 +61,14 @@ active_state:
   representation_training_status: COMPLETE_SEED_42
   phase2_freeze: configs/protocols/p2-freeze-v1.yaml
   g2_handoff: configs/protocols/p3.1-g2-handoff-v1.yaml  # P3.1 Done: verified and accepted by the researcher on 2026-11-22
-  target_adaptation_status: P3.5_DONE  # P3.2-P3.5 accepted by the researcher on 2026-11-28
+  target_adaptation_status: P3.6_IN_PROGRESS  # P3.2-P3.5 accepted 2026-11-28; P3.6 opened the same day
   adaptation_receipt: configs/protocols/p3.2-p3.4-receipt-v1.yaml  # frozen memory, CAL-CS-001, DRIFT-CS-001
   uncertainty_receipt: configs/protocols/p3.5-receipt-v1.yaml  # UNC-CS-001
   preregistered_adaptation:  # P3.3 and P3.4 opened on 2026-11-27; built on the frozen P3.2 memory on 2026-11-28
     P3.3: configs/protocols/cal-cs-v1.yaml  # CAL-CS-001
     P3.4: configs/protocols/drift-cs-v1.yaml  # DRIFT-CS-001
     P3.5: configs/protocols/unc-cs-v1.yaml  # UNC-CS-001, opened 2026-11-28
+    P3.6: configs/protocols/fus-base-v1.yaml  # FUS-BASE-001, opened 2026-11-28
   phase_1_artifacts:
     dataset_registry: data/registry/dataset_registry.json
     stream_indices: data/processed/protocol/streams/
@@ -119,7 +121,7 @@ active_state:
       Also depends on P3.2-P3.5.
     G2: Expert Diversity. PARTIAL, signed by the researcher on 2026-11-22 (DIV-P2-001); equal-weight fusion is the
       mandatory comparator.
-  next_authorized_task_status: WAITING_RESEARCHER  # P3.5 Done (2026-11-28); P3.6 opens only when the researcher authorizes it
+  next_authorized_task_status: IN_PROGRESS  # opened by the researcher on 2026-11-28; P3.7 is closed by G2 = PARTIAL
   researcher_signatures:
     ledger: configs/protocols/g0-signatures.yaml
     signed_on: '2026-09-06'

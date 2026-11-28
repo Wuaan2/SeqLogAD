@@ -2,7 +2,7 @@ roadmap:
   schema_version: '1.0'
   authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
   source_workbook: Bang_ke_hoach_SeqLogAD.xlsx
-  source_workbook_sha256: bb534f32f06132549fc351441412fa989116ed45ace99f9c78e411d1a57b3f9e
+  source_workbook_sha256: f14bb227f54766d0b9b21f9956e799ec9440534b6204f2a7ff473a96da094280
   worksheets:
   - Executive
   - Roadmap
@@ -753,7 +753,7 @@ roadmap:
     dependencies:
     - P3.3
     definition_of_done: Không learned target weights; old models remain explicit baselines.
-    workbook_status: Waiting researcher
+    workbook_status: In progress
     playbook:
       method: '1) Khóa baselines: strongest single, equal-weight, Transformer Encoder và Isolation Forest.
 
