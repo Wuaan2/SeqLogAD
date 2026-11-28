@@ -1,0 +1,94 @@
+# FUS-GATE-001 (P3.7) exploratory adaptive gate. Declared on 2026-11-28, after P3.2-P3.6 were accepted and before
+# any synthetic window was scored. G2 stays PARTIAL: the researcher opened P3.7 as an exploratory analysis only
+# (amendment below) and chose the self-supervised synthetic design. No label of any kind (source or target) is read.
+fus_gate:
+  id: FUS-GATE-001
+  version: '1.0'
+  task: P3.7
+  status: PREREGISTERED
+  mode: EXPLORATORY
+  authorized_by: RESEARCHER
+  authorized_on: '2026-11-28'
+  amendment:
+    id: P3.7-EXPLORATORY-001
+    decided_by: RESEARCHER  # project chat, 2026-11-28: "làm p3.7 theo hướng 1" and the design answer SELF_SUPERVISED_SYNTHETIC
+    decided_on: '2026-11-28'
+    gates_unchanged: {G1: NOT_PASSED, G2: PARTIAL}  # configs/protocols/g2-signature.yaml is not edited
+    meaning: the learned gate is trained and reported as an exploratory analysis. It supports no claim that fusion
+      helps; EQUAL_WEIGHT stays the primary fusion and the mandatory comparator. Every gate table is labelled
+      EXPLORATORY.
+    confirmation_seeds: not used (SEED-CONFIRM-001 forbids feeding them into Phase 3)
+  roadmap_update:
+    id: P3.7-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.6-done.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.6-done.yaml
+    from_sha256: 3b1b3a55d1f75b7a910eaf295b9b1cca132516bc934d0976f257948543693eab
+    to_sha256: 945ce5462df1bf395049c471b85f7901fe6a6403079572d69e7b2c2c8311ff44
+    changed_cells:
+      Task Register!K27: {before: Blocked, after: In progress}
+    gate_signature_created: false
+  depends_on: [P3.4, P3.5, P3.6]
+  folds: [FOLD-TARGET-ARCH-HDFS, FOLD-TARGET-ARCH-BGL]
+
+  episodes:  # leave-one-architecture-out over the sources of each target fold
+    per_fold: one episode per source architecture of the fold (the fold's three training sources)
+    base_windows: the 512 checkpoint-selection windows of each source (select_windows(val, 512, seed 42), the windows
+      DIV-P2-001 excludes); no DIV-P2-001 evaluation window or result is used, and no label is read
+    limitation: the experts were trained on every source of the fold, so an episode varies the system, not the
+      experts' exposure; the selected checkpoints were chosen on these windows (with labels, under C2), so the
+      expert scores on them may be optimistic
+  synthetic:  # every base window gives a CLEAN copy and three mutated copies; seed 42
+    FOREIGN_TARGET: the target message is replaced by the target message of a base window of another source of the
+      same fold, drawn with the seed  # a semantic and sequence anomaly
+    SHUFFLED_CONTEXT: the context messages are put in a seeded random order that differs from the original; windows
+      with fewer than 2 distinct context messages get no copy  # a sequence anomaly
+    FOREIGN_TOPOLOGY: the component_text and location of every record of the window are replaced by those of the
+      records of a base window of another source (cycled)  # a structural anomaly; message text unchanged
+    scored_inputs: an expert scores a copy only when its input differs from CLEAN (SEMANTIC_LLAMA reads the target
+      message only; the sequence experts read messages only); otherwise the CLEAN score is reused
+    graph_records: for P2.4, a mutation acts on the records of its graph; under SHUFFLED_CONTEXT each sequence-context
+      record that the graph contains takes the message the sequence experts see at that position (some ARCH-HADOOP
+      graph contexts leave out records of the sequence context; those records are not P2.4 input)
+    scoring: P2.1-P2.3 on a Colab GPU, P2.4 on the local CPU, with the frozen seed-42 checkpoints and their sanity check
+
+  families:  # the gate's three outputs
+    SEMANTIC: SEMANTIC_LLAMA
+    SEQUENCE: mean of SEQUENCE_LLAMA_REFERENCE and SEQUENCE_LIGHTWEIGHT over those SCORED  # no selection between them
+    STRUCTURAL: GTAT_STRUCTURAL_TEMPORAL
+  scale: each expert's score is quantile-scaled with the CAL-CS-001 formula and anchors (q50, q99); the reference is
+    the episode's VALID CLEAN copies (source episode, up to 512, below CAL-CS-001's minimum of 1000, so the episode
+    scale is coarser) or CAL-CS-001 itself (target)
+  features:  # 8, each in [0, 1], against the system's normal reference R (source: the source's training windows and
+    # its CLEAN copies; target: the frozen ADAPT-MEM-001 memory and UNC-CS-001)
+    - semantic_native_uncertainty: ECDF of SEMANTIC_LLAMA's native uncertainty against R
+    - sequence_native_uncertainty: mean ECDF of the two sequence experts' native uncertainty against R
+    - input_coverage: the smallest EVID-CS-001 coverage over the SCORED experts
+    - event_coverage: DRIFT-CS-001 event coverage of the window against R's unigrams
+    - transition_coverage: DRIFT-CS-001 transition coverage against R's transitions; 1.0 for a one-record window
+    - topology_coverage: DRIFT-CS-001 topology coverage against R's node attributes
+    - context_length: window records / 9
+    - scored_share: SCORED experts / 4
+  missing_feature: a feature that cannot be computed (no SCORED expert to read it from) is 0.5; scored_share and
+    input_coverage (0 when no expert is SCORED) record why
+  expert_scored: status VALID with a finite score and a scale (LOW_COVERAGE and ABSTAIN are not SCORED, as UNC-CS-001)
+  gate:
+    model: MLP 8 -> 32 -> 16 -> 3, ReLU, softmax over the families with a score (renormalised)
+    fused_score: sum over families of weight x family score
+    unknown_review: fewer than 2 families with a score (the UNC-CS-001 quorum)
+    objective: paired ranking loss, mean softplus(fused(CLEAN) - fused(mutated)) over every (base window, mutation)
+    training: {optimizer: Adam, lr: 0.001, full_batch: true, max_epochs: 500, seed: 42}
+    epochs: chosen by leave-one-episode-out (train on two episodes, the lowest mean held-out loss over the three
+      rotations); the frozen gate is then trained on all three episodes for that many epochs
+  report:  # every table EXPLORATORY; synthetic labels only
+    held_out_episode: AUROC of mutated vs CLEAN per mutation for GATE, EQUAL_WEIGHT and each family
+    weights: mean gate weight per family and mutation
+    target_buffer: gate weights and fused scores of the UNC-CS-001 buffer windows (example outputs)
+    final_evaluation: the frozen gate is scored once on the target evaluation windows in the locked run (G4)
+  output:
+    artifact: data/processed/adaptation/FUS-GATE-001/<fold>/
+    binds: [synthetic scores SHA-256, memory.json, CAL-CS-001, UNC-CS-001, this spec's SHA-256, builder SHA-256]
+  forbidden:
+    - reading any source or target label
+    - using a DIV-P2-001 evaluation window or result, or a confirmation-seed result
+    - changing the mutations, features, model or objective after a synthetic score has been seen
+    - claiming that fusion helps from the gate (exploratory only; G2 = PARTIAL)

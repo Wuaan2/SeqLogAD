@@ -20,6 +20,9 @@ EXPERTS = ["SEMANTIC_LLAMA", "SEQUENCE_LLAMA_REFERENCE", "SEQUENCE_LIGHTWEIGHT",
 CAL_SPEC, DRIFT_SPEC = calibration.load_spec(ROOT), drift.load_spec(ROOT)
 UNC_SPEC = uncertainty.load_spec(ROOT)
 BASE_SPEC = baselines.load_spec(ROOT)
+GATE_SPEC = yaml.safe_load((ROOT / "configs/protocols/fus-gate-v1.yaml").read_text(encoding="utf-8"))["fus_gate"]
+BASE_RECEIPT = yaml.safe_load(
+    (ROOT / "configs/protocols/p3.6-receipt-v1.yaml").read_text(encoding="utf-8"))["base_receipt"]
 UNC_RECEIPT = yaml.safe_load((ROOT / "configs/protocols/p3.5-receipt-v1.yaml").read_text(encoding="utf-8"))["unc_receipt"]
 RECEIPT = yaml.safe_load(
     (ROOT / "configs/protocols/p3.2-p3.4-receipt-v1.yaml").read_text(encoding="utf-8"))["adaptation_receipt"]
@@ -351,7 +354,7 @@ def test_p3_6_has_no_learned_target_weight_and_exact_provenance():
     assert BASE_SPEC["experts"] == EXPERTS and BASE_SPEC["learned_target_weights"] is False
     assert BASE_SPEC["baselines"]["STRONGEST_SINGLE"]["rule"] == "ORACLE_UPPER_BOUND" and BASE_SPEC["tuning"] == "none"
     update = BASE_SPEC["roadmap_update"]
-    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / BASE_RECEIPT["roadmap_update"]["previous_workbook"]
     assert sha256_file(before_path) == update["from_sha256"] == UNC_RECEIPT["roadmap_update"]["to_sha256"]
     assert sha256_file(after_path) == update["to_sha256"]
     books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
@@ -427,3 +430,52 @@ def test_baselines_fit_on_the_buffer_only_and_are_written_once(tmp_path, monkeyp
     assert in_sample == ["ISOLATION_FOREST", "TRANSFORMER_ENCODER"] and "encoder.pt" in manifest["files"]
     with pytest.raises(AdaptationError, match="written once"):
         baselines.build_baselines(tmp_path, ROOT, [FOLD])
+
+
+def test_p3_6_receipt_has_exact_provenance_and_binds_the_current_baselines():
+    import openpyxl
+
+    from seqlogad.common.checksum import sha256_file
+
+    update = BASE_RECEIPT["roadmap_update"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / GATE_SPEC["roadmap_update"]["previous_workbook"]
+    assert sha256_file(before_path) == update["from_sha256"] == BASE_SPEC["roadmap_update"]["to_sha256"]
+    assert sha256_file(after_path) == update["to_sha256"]
+    books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
+    before, after = [{f"{s.title}!{c.coordinate}": c.value for s in b for row in s for c in row if c.value is not None}
+                     for b in books]
+    changed = {k: {"before": before.get(k), "after": after.get(k)}
+               for k in before.keys() | after.keys() if before.get(k) != after.get(k)}
+    assert changed == update["changed_cells"] and update["gate_signature_created"] is False
+    for sheet in books[0]:
+        assert str(sheet.data_validations) == str(books[1][sheet.title].data_validations)
+    # editing the spec or the builder after the build needs a new artifact version
+    assert BASE_RECEIPT["spec_sha256"] == BASE_SPEC["sha256"]
+    assert BASE_RECEIPT["builder_sha256"] == sha256_file(ROOT / "src/seqlogad/adaptation/baselines.py")
+    assert set(BASE_RECEIPT["folds"]) == set(BASE_SPEC["folds"])
+    assert BASE_RECEIPT["learned_target_weights"] is False and BASE_RECEIPT["target_labels_read"] is False
+
+
+# ---------------------------------------------------------------- FUS-GATE-001
+
+def test_p3_7_is_exploratory_label_free_and_has_exact_provenance():
+    import openpyxl
+
+    from seqlogad.common.checksum import sha256_file
+
+    assert GATE_SPEC["status"] == "PREREGISTERED" and GATE_SPEC["mode"] == "EXPLORATORY"
+    assert GATE_SPEC["amendment"]["gates_unchanged"] == {"G1": "NOT_PASSED", "G2": "PARTIAL"}
+    assert len(GATE_SPEC["features"]) == 8 and set(GATE_SPEC["families"]) == {"SEMANTIC", "SEQUENCE", "STRUCTURAL"}
+    assert any("label" in rule for rule in GATE_SPEC["forbidden"])
+    g2 = yaml.safe_load((ROOT / "configs/protocols/g2-signature.yaml").read_text(encoding="utf-8"))["g2_signature"]
+    assert g2["decision"] == "PARTIAL"  # the amendment does not touch the signed gate
+    update = GATE_SPEC["roadmap_update"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    assert sha256_file(before_path) == update["from_sha256"] == BASE_RECEIPT["roadmap_update"]["to_sha256"]
+    assert sha256_file(after_path) == update["to_sha256"]
+    books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
+    before, after = [{f"{s.title}!{c.coordinate}": c.value for s in b for row in s for c in row if c.value is not None}
+                     for b in books]
+    changed = {k: {"before": before.get(k), "after": after.get(k)}
+               for k in before.keys() | after.keys() if before.get(k) != after.get(k)}
+    assert changed == update["changed_cells"] and update["gate_signature_created"] is False
