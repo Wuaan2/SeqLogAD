@@ -1,0 +1,83 @@
+# FUS-BASE-001 (P3.6) fusion baselines with no learned target weight. Declared on 2026-11-28, after P3.2-P3.5 were
+# accepted and before any target evaluation record was scored. The researcher chose the three open designs in the
+# project chat on 2026-11-28: a buffer-trained Transformer encoder, an event-count Isolation Forest fitted on the
+# buffer, and the strongest single as an oracle upper bound. Nothing here is derived from a target label.
+# Build (fit on the buffer, example predictions): python -m seqlogad.adaptation.baselines build --root <data root> --repo-root .
+fus_base:
+  id: FUS-BASE-001
+  version: '1.0'
+  task: P3.6
+  status: PREREGISTERED
+  authorized_by: RESEARCHER  # project chat, 2026-11-28: "Open P3.6" and the three design answers
+  authorized_on: '2026-11-28'
+  roadmap_update:
+    id: P3.6-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.5-done.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.5-done.yaml
+    from_sha256: bb534f32f06132549fc351441412fa989116ed45ace99f9c78e411d1a57b3f9e
+    to_sha256: f14bb227f54766d0b9b21f9956e799ec9440534b6204f2a7ff473a96da094280
+    changed_cells:
+      Task Register!K26: {before: Waiting researcher, after: In progress}
+    gate_signature_created: false
+  depends_on: [P3.3, P3.5]  # CAL-CS-001 scale; UNC-CS-001 states and quorum
+
+  memory: configs/protocols/adapt-mem-v1.yaml
+  calibration: configs/protocols/cal-cs-v1.yaml
+  uncertainty: configs/protocols/unc-cs-v1.yaml
+  folds: [FOLD-TARGET-ARCH-HDFS, FOLD-TARGET-ARCH-BGL]
+  experts: [SEMANTIC_LLAMA, SEQUENCE_LLAMA_REFERENCE, SEQUENCE_LIGHTWEIGHT, GTAT_STRUCTURAL_TEMPORAL]
+  learned_target_weights: false
+  tuning: none  # each baseline has exactly one configuration below; no search, so every baseline has the same zero budget
+
+  baselines:
+    SINGLE:  # one baseline per expert: SINGLE_<expert_id>
+      score: the expert's CAL-CS-001 calibrated score
+      unknown_review: an expert that is UNKNOWN_REVIEW under UNC-CS-001 has no score for that window
+    STRONGEST_SINGLE:
+      rule: ORACLE_UPPER_BOUND  # the best AP among the four singles, per fold, in the locked final evaluation
+      meaning: chosen with the evaluation labels, so it is an upper bound for any single expert and a conservative
+        comparator for fusion; it is never a deployable model and is labelled ORACLE in every table
+    EQUAL_WEIGHT:  # the mandatory comparator (G2 = PARTIAL)
+      score: mean of the calibrated scores of the SCORED experts of the window (weight 1/k, k = SCORED experts)
+      unknown_review: the window is UNKNOWN_REVIEW under the UNC-CS-001 quorum (fewer than 2 SCORED experts)
+    TRANSFORMER_ENCODER:
+      input: the window's records (8 context records and the target) as normalised-message ids; left-padded to 9
+      vocabulary: the distinct normalised messages of the statistics windows' records, plus PAD, MASK and UNK (any
+        other message)
+      model: {layers: 2, d_model: 64, heads: 4, feedforward: 128, dropout: 0.1, positions: learned}
+      objective: masked-record prediction, one record position masked uniformly at random per window and epoch
+      fit_on: every ADAPT-MEM-001 statistics window of the fold, in target-rank order; the last 10% are the
+        label-free early-stopping set
+      training: {optimizer: AdamW, lr: 0.001, batch: 256, max_epochs: 20, patience: 3, seed: 42}
+      score: negative log-likelihood of the target record with the target position masked
+    ISOLATION_FOREST:
+      features: hashed normalised-message counts of the window  # the P2.6 comparator features (DIV-P2-001)
+      config: {buckets: 1024, n_estimators: 200, random_state: 42}
+      fit_on: every ADAPT-MEM-001 statistics window of the fold
+      score: minus the sklearn score_samples value (higher is more anomalous)
+
+  input_access:  # recorded for comparison eligibility
+    experts: source training data (Phase 2) and the burn-in buffer for calibration (CAL-CS-001); never target labels
+    TRANSFORMER_ENCODER: the burn-in buffer only; no source data, no target label, no evaluation record for fitting
+    ISOLATION_FOREST: the burn-in buffer only; no source data, no target label, no evaluation record for fitting
+  eligibility: a baseline is comparable on a fold when it scores the same evaluation windows of the same fold and its
+    fitting read no target label and no evaluation record; UNKNOWN_REVIEW windows are reported in the three
+    UNC-CS-001 views
+  budget_table: [trainable_parameters, fit_seconds, score_seconds_per_window, device, fitted_on]
+
+  predictions:
+    schema: [baseline_id, fold_id, target_rank, target_record_id, score_raw, score_direction, status, reason]
+    note: EVID-CS-001 validates only the four frozen Phase-2 experts (P2-FREEZE-001), so the baselines use its key
+      fields in a table instead of envelopes; score_direction is HIGHER_IS_MORE_ANOMALOUS for every baseline
+    now: the buffer windows of UNC-CS-001 as example outputs; the encoder and the forest are fitted on these windows,
+      so their buffer predictions are in-sample and marked IN_SAMPLE
+    final_evaluation: the target evaluation windows, scored once in the locked final run (G4)
+
+  output:
+    artifact: data/processed/adaptation/FUS-BASE-001/<fold>/  # artifact.json, predictions, encoder history, encoder.pt
+    binds: [memory_key, memory.json SHA-256, CAL-CS-001 and UNC-CS-001 artifact SHA-256, this spec's SHA-256, builder SHA-256]
+  forbidden:
+    - any weight, threshold or configuration learned or chosen with target labels (the oracle is a reported bound only)
+    - fitting a baseline on target evaluation records
+    - a second configuration of any baseline (no tuning)
+    - changing a baseline after any evaluation score has been seen

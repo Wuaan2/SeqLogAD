@@ -8,7 +8,7 @@ import polars as pl
 import pytest
 import yaml
 
-from seqlogad.adaptation import calibration, drift, uncertainty
+from seqlogad.adaptation import baselines, calibration, drift, uncertainty
 from seqlogad.adaptation.store import ADAPT_ROOT, AdaptationError, load_artifact
 from seqlogad.memory.build import memory_key, write_component
 from seqlogad.memory.prototypes import freeze_memory
@@ -19,6 +19,7 @@ FOLD, ARCH = "FOLD-TARGET-ARCH-BGL", "ARCH-BGL"
 EXPERTS = ["SEMANTIC_LLAMA", "SEQUENCE_LLAMA_REFERENCE", "SEQUENCE_LIGHTWEIGHT", "GTAT_STRUCTURAL_TEMPORAL"]
 CAL_SPEC, DRIFT_SPEC = calibration.load_spec(ROOT), drift.load_spec(ROOT)
 UNC_SPEC = uncertainty.load_spec(ROOT)
+BASE_SPEC = baselines.load_spec(ROOT)
 UNC_RECEIPT = yaml.safe_load((ROOT / "configs/protocols/p3.5-receipt-v1.yaml").read_text(encoding="utf-8"))["unc_receipt"]
 RECEIPT = yaml.safe_load(
     (ROOT / "configs/protocols/p3.2-p3.4-receipt-v1.yaml").read_text(encoding="utf-8"))["adaptation_receipt"]
@@ -279,7 +280,8 @@ def test_risk_coverage_drops_the_most_uncertain_windows_first():
     assert result["0.5"] == 1.0 and result["1.0"] < 1.0  # the low-scored positive is the most uncertain kept one
 
 
-def test_uncertainty_reads_the_bound_buffer_pass_and_is_written_once(tmp_path):
+def _pass_files(tmp_path):
+    """Buffer-pass envelopes of the synthetic fold and their evidence hashes, as the frozen memory binds them."""
     from seqlogad.common.checksum import sha256_file
 
     folder = tmp_path / "pass" / FOLD
@@ -291,7 +293,11 @@ def test_uncertainty_reads_the_bound_buffer_pass_and_is_written_once(tmp_path):
                              "uncertainty_method": "DISPERSION" if native else "UNCERTAINTY_NOT_ESTIMATED_IN_PHASE2"})
                  for r in range(1200)]
         (folder / f"{expert}.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    receipts = {e: {"evidence_sha256": sha256_file(folder / f"{e}.jsonl")} for e in EXPERTS}
+    return folder, {e: {"evidence_sha256": sha256_file(folder / f"{e}.jsonl")} for e in EXPERTS}
+
+
+def test_uncertainty_reads_the_bound_buffer_pass_and_is_written_once(tmp_path):
+    folder, receipts = _pass_files(tmp_path)
     _memory(tmp_path, pass_receipts=receipts)
     with pytest.raises(AdaptationError, match="not built"):
         uncertainty.build_uncertainty(tmp_path, ROOT, tmp_path / "pass", [FOLD])
@@ -317,7 +323,7 @@ def test_p3_5_receipt_has_exact_provenance_and_binds_the_current_rule():
     from seqlogad.common.checksum import sha256_file
 
     update = UNC_RECEIPT["roadmap_update"]
-    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / BASE_SPEC["roadmap_update"]["previous_workbook"]
     assert sha256_file(before_path) == update["from_sha256"] == UNC_SPEC["roadmap_update"]["to_sha256"]
     assert sha256_file(after_path) == update["to_sha256"]
     books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
@@ -333,3 +339,91 @@ def test_p3_5_receipt_has_exact_provenance_and_binds_the_current_rule():
     assert UNC_RECEIPT["builder_sha256"] == sha256_file(ROOT / "src/seqlogad/adaptation/uncertainty.py")
     assert set(UNC_RECEIPT["folds"]) == set(UNC_SPEC["folds"]) and UNC_RECEIPT["quorum"] == UNC_SPEC["window"]["quorum"]
     assert UNC_RECEIPT["target_labels_read"] is False and UNC_RECEIPT["accepted_by"] == "RESEARCHER"
+
+
+# ---------------------------------------------------------------- FUS-BASE-001
+
+def test_p3_6_has_no_learned_target_weight_and_exact_provenance():
+    import openpyxl
+
+    from seqlogad.common.checksum import sha256_file
+
+    assert BASE_SPEC["experts"] == EXPERTS and BASE_SPEC["learned_target_weights"] is False
+    assert BASE_SPEC["baselines"]["STRONGEST_SINGLE"]["rule"] == "ORACLE_UPPER_BOUND" and BASE_SPEC["tuning"] == "none"
+    update = BASE_SPEC["roadmap_update"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    assert sha256_file(before_path) == update["from_sha256"] == UNC_RECEIPT["roadmap_update"]["to_sha256"]
+    assert sha256_file(after_path) == update["to_sha256"]
+    books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
+    before, after = [{f"{s.title}!{c.coordinate}": c.value for s in b for row in s for c in row if c.value is not None}
+                     for b in books]
+    changed = {k: {"before": before.get(k), "after": after.get(k)}
+               for k in before.keys() | after.keys() if before.get(k) != after.get(k)}
+    assert changed == update["changed_cells"] and update["gate_signature_created"] is False
+
+
+def test_equal_weight_averages_the_scored_experts_and_respects_the_quorum():
+    states = pl.DataFrame({"expert_id": ["A", "B", "C", "A", "B"], "target_rank": [1, 1, 1, 2, 2],
+                           "expert_state": ["SCORED", "SCORED", "UNKNOWN_REVIEW", "SCORED", "UNKNOWN_REVIEW"],
+                           "reason": [None, None, "LOW_COVERAGE", None, "ABSTAIN"],
+                           "score_calibrated": [1.0, 3.0, 9.0, 2.0, None]})
+    rows = {(b, r): (s, st, why) for b, r, s, st, why in baselines.fusion_predictions(states, 2).iter_rows()}
+    assert rows[("EQUAL_WEIGHT", 1)] == (2.0, "SCORED", None)  # the UNKNOWN_REVIEW expert is left out
+    assert rows[("EQUAL_WEIGHT", 2)] == (None, "UNKNOWN_REVIEW", "QUORUM")
+    assert rows[("SINGLE_C", 1)] == (None, "UNKNOWN_REVIEW", "LOW_COVERAGE") and rows[("SINGLE_A", 2)][0] == 2.0
+
+
+def test_encoder_input_is_left_padded_and_unseen_messages_are_unk():
+    vocab = baselines.vocabulary(["b", "a", "b"])
+    assert vocab == {"a": 3, "b": 4}
+    x = baselines.encode([["a", "b"], ["z"] * 12], vocab)
+    assert x.shape == (2, baselines.LENGTH) and x[0].tolist() == [0] * 7 + [3, 4] and set(x[1]) == {baselines.UNK}
+
+
+def test_isolation_forest_scores_an_unusual_window_higher():
+    train = [["a", "b", "a"]] * 200 + [["a", "b", "c"]] * 200
+    config = BASE_SPEC["baselines"]["ISOLATION_FOREST"]["config"]
+    scores = baselines.isolation_scores(train, [["a", "b", "a"], ["x", "y", "z"]], config)
+    assert scores[1] > scores[0]
+
+
+def _tiny_encoder(spec):
+    encoder = spec["baselines"]["TRANSFORMER_ENCODER"]
+    return dict(spec, baselines=dict(spec["baselines"], TRANSFORMER_ENCODER=dict(
+        encoder, training=dict(encoder["training"], max_epochs=3))))
+
+
+def test_encoder_learns_the_buffer_pattern_and_is_reproducible():
+    pytest.importorskip("torch")
+    chains = [["a", "b"] * 4 + ["a"]] * 300 + [["b", "a"] * 4 + ["b"]] * 300
+    vocab = baselines.vocabulary(["a", "b", "c"])
+    x = baselines.encode(chains, vocab)
+    spec = _tiny_encoder(BASE_SPEC)["baselines"]["TRANSFORMER_ENCODER"]
+    model, history = baselines.fit_encoder(x, len(vocab) + 3, spec)
+    probe = baselines.encode([["a", "b"] * 4 + ["a"], ["a", "b"] * 4 + ["c"]], vocab)
+    usual, unusual = baselines.score_encoder(model, probe)
+    assert unusual > usual and len(history) <= 3
+    again, _ = baselines.fit_encoder(x, len(vocab) + 3, spec)
+    assert np.allclose(baselines.score_encoder(again, probe), [usual, unusual])
+
+
+def test_baselines_fit_on_the_buffer_only_and_are_written_once(tmp_path, monkeypatch):
+    pytest.importorskip("torch")
+    _, receipts = _pass_files(tmp_path)
+    _memory(tmp_path, pass_receipts=receipts)
+    with pytest.raises(AdaptationError, match="not built"):
+        baselines.build_baselines(tmp_path, ROOT, [FOLD])
+    calibration.build_calibration(tmp_path, ROOT, [FOLD])
+    uncertainty.build_uncertainty(tmp_path, ROOT, tmp_path / "pass", [FOLD])
+    spec = _tiny_encoder(baselines.load_spec(ROOT))
+    monkeypatch.setattr(baselines, "load_spec", lambda _: spec)
+    report = baselines.build_baselines(tmp_path, ROOT, [FOLD])
+    manifest = load_artifact(tmp_path, "FUS-BASE-001", FOLD)
+    assert manifest["learned_target_weights"] is False and manifest["target_labels_read"] is False
+    assert report[FOLD]["budget"]["SINGLE_AND_EQUAL_WEIGHT"]["trainable_parameters"] == 0
+    predictions = pl.read_parquet(tmp_path / ADAPT_ROOT / "FUS-BASE-001" / FOLD / "predictions.parquet")
+    assert predictions["baseline_id"].n_unique() == 7 and predictions.group_by("baseline_id").len()["len"].n_unique() == 1
+    in_sample = predictions.filter(pl.col("in_sample"))["baseline_id"].unique().sort().to_list()
+    assert in_sample == ["ISOLATION_FOREST", "TRANSFORMER_ENCODER"] and "encoder.pt" in manifest["files"]
+    with pytest.raises(AdaptationError, match="written once"):
+        baselines.build_baselines(tmp_path, ROOT, [FOLD])

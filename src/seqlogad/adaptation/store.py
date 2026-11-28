@@ -59,6 +59,10 @@ def write_artifact(root, artifact_id, fold_id, tables, manifest):
     staging.mkdir(parents=True)
     files = {}
     for name, frame in tables.items():
+        if isinstance(frame, bytes):  # a named binary file, e.g. model weights
+            (staging / name).write_bytes(frame)
+            files[name] = sha256_file(staging / name)
+            continue
         frame.write_parquet(staging / f"{name}.parquet", compression="zstd")
         files[f"{name}.parquet"] = sha256_file(staging / f"{name}.parquet")
     (staging / "artifact.json").write_text(json.dumps(dict(manifest, files=files), indent=2, sort_keys=True) + "\n",
