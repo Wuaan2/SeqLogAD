@@ -2,7 +2,7 @@ roadmap:
   schema_version: '1.0'
   authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
   source_workbook: Bang_ke_hoach_SeqLogAD.xlsx
-  source_workbook_sha256: 92c5a91a5c068b02b59aaa84ce7d74056f15d031b18770014261079216a27d37
+  source_workbook_sha256: 3b03bab3b3a4fad81911c13d155a7ce35370ae1ac39eb0869a5a5298a9979a95
   worksheets:
   - Executive
   - Roadmap
@@ -681,7 +681,7 @@ roadmap:
     dependencies:
     - P3.2
     definition_of_done: Score scales comparable without target labels.
-    workbook_status: Not started
+    workbook_status: In progress
     playbook:
       method: '1) Tính quantiles trên normal buffer cho từng expert; chọn rule chuyển score trước evaluation.
 
@@ -705,7 +705,7 @@ roadmap:
     dependencies:
     - P3.2
     definition_of_done: Drift metric has baseline and no silent recalibration.
-    workbook_status: Not started
+    workbook_status: In progress
     playbook:
       method: '1) Predefine drift statistic giữa source/buffer và online coverage statistic.
 

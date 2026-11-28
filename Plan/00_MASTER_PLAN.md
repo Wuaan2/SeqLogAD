@@ -10,7 +10,8 @@ Where any plan document in this directory disagrees with the workbook, the workb
 wins. See [`../docs/migration/EXCEL-PLAN-MIGRATION-001.md`](../docs/migration/EXCEL-PLAN-MIGRATION-001.md).
 
 Phase 2 is complete (P2-FREEZE-001, seed 42); G0 = PASSED, G2 = PARTIAL;
-`NEXT_AUTHORIZED_TASK = P3.2` (in progress, ADAPT-MEM-001); P3.1 Done.
+`NEXT_AUTHORIZED_TASK = P3.2` (in progress, ADAPT-MEM-001); P3.1 Done; P3.3 and P3.4 preregistered
+(CAL-CS-001, DRIFT-CS-001), run after the P3.2 memory is frozen.
 
 ## Supporting implementation plan
 

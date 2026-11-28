@@ -31,7 +31,7 @@ which criteria hold; it may not declare a gate passed.
 ## Current state
 
 `CURRENT_PHASE = P2_COMPLETE` · `G0 = PASSED` (signed 2026-09-06) · `G2 = PARTIAL` (signed 2026-11-22) ·
-`NEXT_AUTHORIZED_TASK = P3.2` (in progress, ADAPT-MEM-001); P2.PRE–P2.7 Done on seed 42, frozen as P2-FREEZE-001; P3.1 Done ·
+`NEXT_AUTHORIZED_TASK = P3.2` (in progress, ADAPT-MEM-001); P2.PRE–P2.7 Done on seed 42, frozen as P2-FREEZE-001; P3.1 Done; P3.3/P3.4 preregistered (CAL-CS-001, DRIFT-CS-001) ·
 `G1, G3, G4 = NOT_PASSED` · `EXC-003` blocks G1 for the ARCH-HADOOP fold.
 
 ## Retired routing

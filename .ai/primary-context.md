@@ -52,7 +52,9 @@ exact payload match on every build.
 `NEXT_AUTHORIZED_TASK = P3.2` — Target memory (ADAPT-MEM-001, `configs/protocols/adapt-mem-v1.yaml`), in progress since the researcher authorized it on 2026-11-22. P3.1 (held-out check) is Done:
 G2-HANDOFF-001 (`configs/protocols/p3.1-g2-handoff-v1.yaml`) verified the P2.7 package and the G2 record.
 Phase 2 is complete on seed 42 and frozen as P2-FREEZE-001 (`configs/protocols/p2-freeze-v1.yaml`), accepted by
-the researcher on 2026-11-22; G2 = PARTIAL. P3.3 onwards stay closed. Namespace P2_ARCH_V1 and historical
+the researcher on 2026-11-22; G2 = PARTIAL. P3.3 and P3.4 were opened on 2026-11-27 to preregister
+CAL-CS-001 (`configs/protocols/cal-cs-v1.yaml`) and DRIFT-CS-001 (`configs/protocols/drift-cs-v1.yaml`); both run only
+on the frozen P3.2 memory. P3.5 onwards stay closed. Namespace P2_ARCH_V1 and historical
 crosswalk: `configs/protocols/phase2-roadmap-migration-v1.yaml`. Phase-2 contract:
 `configs/protocols/phase2-architecture-v1.yaml`; source-label C2 resolved (source validation labels only).
 

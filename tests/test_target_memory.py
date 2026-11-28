@@ -28,7 +28,8 @@ def test_p3_2_status_update_has_exact_provenance():
 
     update = CONTRACT["roadmap_update"]
     handoff = yaml.safe_load((ROOT / "configs/protocols/p3.1-g2-handoff-v1.yaml").read_text(encoding="utf-8"))
-    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    after = yaml.safe_load((ROOT / "configs/protocols/cal-cs-v1.yaml").read_text(encoding="utf-8"))["cal_cs"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / after["roadmap_update"]["previous_workbook"]
     assert sha256_file(before_path) == update["from_sha256"] == handoff["g2_handoff"]["roadmap_update"]["to_sha256"]
     assert sha256_file(after_path) == update["to_sha256"]
     books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]

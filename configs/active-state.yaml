@@ -1,11 +1,11 @@
 active_state:
   id: ACTIVE-STATE-G0-SIGNED-001
-  version: '3.5'
+  version: '3.6'
   status: SYNCHRONIZED
-  synchronized_by: P3.2-STATUS-001
+  synchronized_by: P3.3-P3.4-STATUS-001
   authoritative_plan:
     path: Bang_ke_hoach_SeqLogAD.xlsx
-    sha256: 92c5a91a5c068b02b59aaa84ce7d74056f15d031b18770014261079216a27d37
+    sha256: 3b03bab3b3a4fad81911c13d155a7ce35370ae1ac39eb0869a5a5298a9979a95
     authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
     machine_readable_projection: configs/plan/excel-roadmap-v1.yaml
     regenerate_with: python scripts/extract_excel_roadmap.py
@@ -26,6 +26,7 @@ active_state:
     phase2_completion_status_update: configs/protocols/phase2-architecture-v1.yaml#phase2.tasks.P2.7.roadmap_update
     p3_1_status_update: configs/protocols/p3.1-g2-handoff-v1.yaml#g2_handoff.roadmap_update
     p3_2_status_update: configs/protocols/adapt-mem-v1.yaml#adapt_mem.roadmap_update
+    p3_3_p3_4_status_update: configs/protocols/cal-cs-v1.yaml#cal_cs.roadmap_update
   implementation_contract:
     id: DOMAIN-ADAPTIVE-FUSION-001
     version: '2.0'
@@ -57,6 +58,9 @@ active_state:
   phase2_freeze: configs/protocols/p2-freeze-v1.yaml
   g2_handoff: configs/protocols/p3.1-g2-handoff-v1.yaml  # P3.1 Done: verified and accepted by the researcher on 2026-11-22
   target_adaptation_status: P3.2_IN_PROGRESS  # ADAPT-MEM-001, configs/protocols/adapt-mem-v1.yaml
+  preregistered_adaptation:  # P3.3 and P3.4 opened on 2026-11-27; both run only on the frozen P3.2 memory
+    P3.3: configs/protocols/cal-cs-v1.yaml  # CAL-CS-001
+    P3.4: configs/protocols/drift-cs-v1.yaml  # DRIFT-CS-001
   phase_1_artifacts:
     dataset_registry: data/registry/dataset_registry.json
     stream_indices: data/processed/protocol/streams/
@@ -109,7 +113,7 @@ active_state:
       Also depends on P3.2-P3.5.
     G2: Expert Diversity. PARTIAL, signed by the researcher on 2026-11-22 (DIV-P2-001); equal-weight fusion is the
       mandatory comparator.
-  next_authorized_task_status: IN_PROGRESS  # authorized by the researcher on 2026-11-22; P3.3 onwards stay closed
+  next_authorized_task_status: IN_PROGRESS  # authorized by the researcher on 2026-11-22; P3.3 and P3.4 preregistered (2026-11-27); P3.5 onwards stay closed
   researcher_signatures:
     ledger: configs/protocols/g0-signatures.yaml
     signed_on: '2026-09-06'
