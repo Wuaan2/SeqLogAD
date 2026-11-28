@@ -1,0 +1,50 @@
+# Completion receipt for P3.6 (FUS-BASE-001). Recorded by the coding agent after the build; it signs nothing. The
+# researcher accepted the task in the project chat on 2026-11-28 ("Accept, write receipt"). The artifact lives
+# outside git under the storage path below; this file binds its hashes. Re-check:
+# seqlogad.adaptation.store.load_artifact(<root>, 'FUS-BASE-001', <fold>) re-hashes every file.
+base_receipt:
+  task: P3.6
+  accepted_by: RESEARCHER
+  accepted_on: '2026-11-28'
+  roadmap_update:
+    id: P3.6-DONE-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.6-in-progress.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.6-in-progress.yaml
+    from_sha256: f14bb227f54766d0b9b21f9956e799ec9440534b6204f2a7ff473a96da094280
+    to_sha256: 3b1b3a55d1f75b7a910eaf295b9b1cca132516bc934d0976f257948543693eab
+    changed_cells:
+      Task Register!K26: {before: In progress, after: Done}
+      Task Register!K27: {before: Not started, after: Blocked}  # P3.7 learned gate: closed by G2 = PARTIAL (g2-signature.yaml)
+    gate_signature_created: false
+  target_labels_read: false
+  learned_target_weights: false
+  built_on: '2026-11-28'
+  storage: data/processed/adaptation/FUS-BASE-001/<fold_id>/
+  spec_sha256: 18bf2c72979bba0e85ed8d9b210264c3edc9fef951fd2b80b6c0fb9bffd7f607  # fus-base-v1.yaml
+  builder_sha256: 79bf80fd6f9703601e029f1c9e05be516df057e2f2e4f8231ddb597eb502a1bc  # src/seqlogad/adaptation/baselines.py
+  torch_version: 2.9.1+cpu  # the encoder weights are stored; a refit on another torch or thread count may differ slightly
+  folds:
+    FOLD-TARGET-ARCH-HDFS:
+      artifact_json_sha256: e0ff4135a1c53b360ab39fd6095791dbb9a4506d5032babacc2bc936899069c3
+      encoder_pt_sha256: ced99f1871662af86ebdee26d5db93cb219642b4740053d2cb013f27cf45f324
+      predictions_sha256: e1454cc617f95a2dc217c12ca9b4c13f0d02a6dd12aab87eb34e14f1cd2b86a5
+      calibration_sha256: e02f1723643e4eaff3139f858dd2572821f699c6214665cd718ec3d129f1febe  # CAL-CS-001 artifact.json
+      uncertainty_sha256: 94558040c8b5e230bfaf80d4bb0e9e4975fd39d8421e583542bcb801cf6adce9  # UNC-CS-001 artifact.json
+      encoder: {trainable_parameters: 899183, vocabulary: 6444, epochs: 13, best_validation_target_nll: 1.6663, fit_seconds: 112.5}
+      isolation_forest_fit_seconds: 1.9
+      predictions: 7 baselines x 8192 buffer windows, all SCORED
+    FOLD-TARGET-ARCH-BGL:
+      artifact_json_sha256: 4d2feaf2ba68503fa45647918c2167cfb82a350598c49ea304ee5e157ffe53e9
+      encoder_pt_sha256: 0abb9172d9bd20655a0aa0026bc2c6b1569d873c2eed558140b621cc120bccde
+      predictions_sha256: c9b3a5c4f559a5dd3c2f97079df8713223be4fa07a1076ec151350eccfa901a1
+      calibration_sha256: 508ec30352d990ad0c4a09e60479ae5a09432170795ed3927ba7314c7813fa48
+      uncertainty_sha256: fde2eacb7568a8497c2e66bec95f374827c407166cd6e2099fbe92c559735cf1
+      encoder: {trainable_parameters: 144017, vocabulary: 590, epochs: 8, best_validation_target_nll: 0.2891, fit_seconds: 50.5}
+      isolation_forest_fit_seconds: 1.8
+      predictions: 7 baselines x 8192 buffer windows; UNKNOWN_REVIEW only for the singles GTAT (1), P2.2 (19), P2.3 (19)
+  findings:  # label-free; no rule changed
+    EQUAL_WEIGHT_NEVER_ABSTAINS_ON_THE_BUFFER: no buffer window of either fold falls below the UNC-CS-001 quorum
+    ENCODER_IN_SAMPLE: the encoder and the forest buffer predictions are in-sample (marked in_sample); only the
+      locked final evaluation scores them out of sample
+    P3_7_BLOCKED: the next workbook task, P3.7 (learned gate), is Blocked by the signed G2 = PARTIAL decision; how to
+      route past it (P3.8 depends on P3.7) is the researcher's decision
