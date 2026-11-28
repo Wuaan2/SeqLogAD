@@ -1,11 +1,11 @@
 active_state:
   id: ACTIVE-STATE-G0-SIGNED-001
-  version: '3.10'
+  version: '3.12'
   status: SYNCHRONIZED
-  synchronized_by: P3.6-STATUS-001
+  synchronized_by: P3.7-STATUS-001
   authoritative_plan:
     path: Bang_ke_hoach_SeqLogAD.xlsx
-    sha256: f14bb227f54766d0b9b21f9956e799ec9440534b6204f2a7ff473a96da094280
+    sha256: 945ce5462df1bf395049c471b85f7901fe6a6403079572d69e7b2c2c8311ff44
     authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
     machine_readable_projection: configs/plan/excel-roadmap-v1.yaml
     regenerate_with: python scripts/extract_excel_roadmap.py
@@ -31,6 +31,8 @@ active_state:
     p3_5_status_update: configs/protocols/unc-cs-v1.yaml#unc_cs.roadmap_update
     p3_5_completion_status_update: configs/protocols/p3.5-receipt-v1.yaml#unc_receipt.roadmap_update
     p3_6_status_update: configs/protocols/fus-base-v1.yaml#fus_base.roadmap_update
+    p3_6_completion_status_update: configs/protocols/p3.6-receipt-v1.yaml#base_receipt.roadmap_update
+    p3_7_status_update: configs/protocols/fus-gate-v1.yaml#fus_gate.roadmap_update
   implementation_contract:
     id: DOMAIN-ADAPTIVE-FUSION-001
     version: '2.0'
@@ -54,21 +56,23 @@ active_state:
     G3: NOT_PASSED
     G4: NOT_PASSED
   g0_receipt: data/processed/protocol/G0-receipt.json
-  next_authorized_task: P3.6
-  next_authorized_task_name: Fusion baseline
-  next_authorized_task_blocked_by: []
+  next_authorized_task: P3.7
+  next_authorized_task_name: Adaptive gate
+  next_authorized_task_blocked_by: []  # opened as EXPLORATORY under P3.7-EXPLORATORY-001; G2 stays PARTIAL
   scientific_results_status: NOT_RUN  # no target result; DIV-P2-001 is a source-side diagnostic
   representation_training_status: COMPLETE_SEED_42
   phase2_freeze: configs/protocols/p2-freeze-v1.yaml
   g2_handoff: configs/protocols/p3.1-g2-handoff-v1.yaml  # P3.1 Done: verified and accepted by the researcher on 2026-11-22
-  target_adaptation_status: P3.6_IN_PROGRESS  # P3.2-P3.5 accepted 2026-11-28; P3.6 opened the same day
+  target_adaptation_status: P3.7_IN_PROGRESS  # exploratory gate (FUS-GATE-001); P3.2-P3.6 accepted 2026-11-28
   adaptation_receipt: configs/protocols/p3.2-p3.4-receipt-v1.yaml  # frozen memory, CAL-CS-001, DRIFT-CS-001
   uncertainty_receipt: configs/protocols/p3.5-receipt-v1.yaml  # UNC-CS-001
+  baseline_receipt: configs/protocols/p3.6-receipt-v1.yaml  # FUS-BASE-001
   preregistered_adaptation:  # P3.3 and P3.4 opened on 2026-11-27; built on the frozen P3.2 memory on 2026-11-28
     P3.3: configs/protocols/cal-cs-v1.yaml  # CAL-CS-001
     P3.4: configs/protocols/drift-cs-v1.yaml  # DRIFT-CS-001
     P3.5: configs/protocols/unc-cs-v1.yaml  # UNC-CS-001, opened 2026-11-28
     P3.6: configs/protocols/fus-base-v1.yaml  # FUS-BASE-001, opened 2026-11-28
+    P3.7: configs/protocols/fus-gate-v1.yaml  # FUS-GATE-001, EXPLORATORY, opened 2026-11-28
   phase_1_artifacts:
     dataset_registry: data/registry/dataset_registry.json
     stream_indices: data/processed/protocol/streams/
@@ -121,7 +125,7 @@ active_state:
       Also depends on P3.2-P3.5.
     G2: Expert Diversity. PARTIAL, signed by the researcher on 2026-11-22 (DIV-P2-001); equal-weight fusion is the
       mandatory comparator.
-  next_authorized_task_status: IN_PROGRESS  # opened by the researcher on 2026-11-28; P3.7 is closed by G2 = PARTIAL
+  next_authorized_task_status: IN_PROGRESS  # opened by the researcher on 2026-11-28 as an exploratory analysis; G2 stays PARTIAL
   researcher_signatures:
     ledger: configs/protocols/g0-signatures.yaml
     signed_on: '2026-09-06'

@@ -2,7 +2,7 @@ roadmap:
   schema_version: '1.0'
   authority: HUMAN_DECLARED_PRIMARY_SCIENTIFIC_ROADMAP
   source_workbook: Bang_ke_hoach_SeqLogAD.xlsx
-  source_workbook_sha256: f14bb227f54766d0b9b21f9956e799ec9440534b6204f2a7ff473a96da094280
+  source_workbook_sha256: 945ce5462df1bf395049c471b85f7901fe6a6403079572d69e7b2c2c8311ff44
   worksheets:
   - Executive
   - Roadmap
@@ -753,7 +753,7 @@ roadmap:
     dependencies:
     - P3.3
     definition_of_done: Không learned target weights; old models remain explicit baselines.
-    workbook_status: In progress
+    workbook_status: Done
     playbook:
       method: '1) Khóa baselines: strongest single, equal-weight, Transformer Encoder và Isolation Forest.
 
@@ -779,7 +779,7 @@ roadmap:
     - P3.5
     - P3.6
     definition_of_done: Gate uses drift/uncertainty/context; not target labels.
-    workbook_status: Not started
+    workbook_status: In progress
     playbook:
       method: '1) Meta-train gate MLP 8→32→16→3 Softmax chỉ trên source LOAO episodes.
 

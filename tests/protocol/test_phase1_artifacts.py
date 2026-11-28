@@ -414,10 +414,10 @@ def test_active_state_mirrors_the_receipt_and_cannot_overstate_it(receipt: dict)
     assert migration["from_sha256"] == receipt["plan_sha256"]
     assert migration["crosswalk"][receipt["next_authorized_task"]] == ["P2.PRE"]
     assert state["phase2_base_freeze_status"] == "PASS"
-    assert state["next_authorized_task"] == "P3.6"  # the receipt keeps its historical routing
+    assert state["next_authorized_task"] == "P3.7"  # the receipt keeps its historical routing
     assert state["scientific_results_status"] == receipt["empirical_status"] == "NOT_RUN"
     assert state["representation_training_status"] == "COMPLETE_SEED_42"
-    assert state["target_adaptation_status"] == "P3.6_IN_PROGRESS"
+    assert state["target_adaptation_status"] == "P3.7_IN_PROGRESS"
 
     # G2 carries the researcher's PARTIAL signature; the other later gates stay closed.
     for gate in ("G1", "G3", "G4"):
