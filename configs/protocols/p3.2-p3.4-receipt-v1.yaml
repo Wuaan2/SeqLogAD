@@ -1,0 +1,100 @@
+# Completion receipt for P3.2 (ADAPT-MEM-001), P3.3 (CAL-CS-001) and P3.4 (DRIFT-CS-001). Recorded by the coding
+# agent after the builds; it signs nothing. The researcher accepted the three tasks in the project chat on
+# 2026-11-28 ("Accept, write receipts"). The artifacts live outside git under the storage paths below; this file
+# binds their hashes. Re-check: seqlogad.adaptation.store.load_frozen_memory(<root>, <fold>) and
+# load_artifact(<root>, <artifact>, <fold>) re-hash every file.
+adaptation_receipt:
+  tasks: [P3.2, P3.3, P3.4]
+  accepted_by: RESEARCHER
+  accepted_on: '2026-11-28'
+  roadmap_update:
+    id: P3.2-P3.4-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.3-P3.4-in-progress.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.3-P3.4-in-progress.yaml
+    from_sha256: 3b03bab3b3a4fad81911c13d155a7ce35370ae1ac39eb0869a5a5298a9979a95
+    to_sha256: 2d6d128745826a7743c7284b4c700d805d49c8bedbb4eec4f848d0015e641a4d
+    changed_cells:
+      Task Register!K22: {before: In progress, after: Done}
+      Task Register!K23: {before: In progress, after: Done}
+      Task Register!K24: {before: In progress, after: Done}
+      Task Register!K25: {before: Not started, after: Waiting researcher}  # P3.5 waits for the researcher to open it
+    gate_signature_created: false
+  target_labels_read: false
+  records_outside_buffer_read: false
+
+  adapt_mem:  # P3.2; supersedes the 'fold_memory_frozen: false' state of adapt-mem-statistics-v1.yaml
+    built_on: '2026-11-28'
+    storage: data/processed/memory/ADAPT-MEM-001/<fold_id>/
+    buffer_pass_zip: {name: P3.2_buffer_pass.zip, sha256: 9fd79d34d25790d754d9f7d50bf121d88e39b1bdb16c025fdf91d9dddba282f0}
+    spec_sha256: 9909a5071c2bae576f56c395c2574c6d6a8a33fd97ced31604df3533359fa3bd  # adapt-mem-prototypes-v1.yaml
+    builder_sha256: 3f58d565fde36a667811f74e71c88375e817c5d77ef32e2f05a265cb3aab8b95  # src/seqlogad/memory/prototypes.py
+    pass_sanity: every expert and fold reproduced its frozen Phase-2 score (16 of 16 files match their pass receipts)
+    folds:
+      FOLD-TARGET-ARCH-HDFS:
+        memory_key: ADAPT-MEM-001/ARCH-HDFS/43a505f171d943be123eadf985ac345b11ae1f6767a1b6caccd31864c7fa3899
+        memory_json_sha256: c9560352ce36c25a918be7de477a515e61735e5866b43d9cfb4b9885d7e14912
+        components: {statistics: 3bf0eca1588bbfe2f40a94c99dfe7aea5999762f08e65d1e41e53b201749feb2, prototypes: 89c534790ba640289d9a8de708f9009c0c5d5cf9a9ee20bbc87b05cd757cf4ab, buffer_scores: 32c0e41ae2364355b047a458eced926262937d0922583c30dafcc3241b26d624}
+        buffer_windows: 8192
+        status_counts: {SEMANTIC_LLAMA: {VALID: 8192}, SEQUENCE_LLAMA_REFERENCE: {VALID: 8192}, SEQUENCE_LIGHTWEIGHT: {VALID: 8192}, GTAT_STRUCTURAL_TEMPORAL: {VALID: 8192}}
+      FOLD-TARGET-ARCH-BGL:
+        memory_key: ADAPT-MEM-001/ARCH-BGL/130989c60952161a3e606ca969f6343a036209fd89d6ff06cde2885ee4dad914
+        memory_json_sha256: eb66b62d525185e75e4b8727689767c060a45ad95f8d639b82be3eafd91f3b27
+        components: {statistics: 7c3e79b89c4fc3338982b5a228a6abfcea45002515ff91cbe43570cacbe23df2, prototypes: 5c4b48276364c3a8e079cd910a17721346b912b70bd4b2e59b5ae9489efc5686, buffer_scores: d608f88c68e52b9cb0dd186edd27dffb5a6b26d2fd62da9c869ab27c30650669}
+        buffer_windows: 8192
+        status_counts: {SEMANTIC_LLAMA: {VALID: 8192}, SEQUENCE_LLAMA_REFERENCE: {VALID: 8173, LOW_COVERAGE: 19}, SEQUENCE_LIGHTWEIGHT: {VALID: 8173, LOW_COVERAGE: 19}, GTAT_STRUCTURAL_TEMPORAL: {VALID: 8191, ABSTAIN: 1}}
+    prototypes: 64 k-means prototypes per expert and fold
+
+  cal_cs:  # P3.3
+    built_on: '2026-11-28'
+    storage: data/processed/adaptation/CAL-CS-001/<fold_id>/
+    spec_sha256: c9fa7bd179c9fb5d3a10f0470ab21a47f152a854e558e4fcb97bc44675a6a646  # cal-cs-v1.yaml
+    builder_sha256: 847d3809e59f089b8339c38437146ae6055cb128ee5339f9f06177018e2cb310  # src/seqlogad/adaptation/calibration.py
+    folds:
+      FOLD-TARGET-ARCH-HDFS:
+        artifact_json_sha256: e02f1723643e4eaff3139f858dd2572821f699c6214665cd718ec3d129f1febe
+        anchors:  # q50, q99 of the raw buffer scores; every expert CALIBRATED on 8192 reference windows
+          SEMANTIC_LLAMA: [1.2471891012822907, 3.1297366289404285]
+          SEQUENCE_LLAMA_REFERENCE: [0.1413862556219101, 4.204084873199463]
+          SEQUENCE_LIGHTWEIGHT: [7.462700843811035, 9.272011909484863]
+          GTAT_STRUCTURAL_TEMPORAL: [15.428214430809021, 25.97223085403443]
+        temporal_split_exceedance: {SEMANTIC_LLAMA: 0.0, SEQUENCE_LLAMA_REFERENCE: 0.000244140625, SEQUENCE_LIGHTWEIGHT: 0.044677734375, GTAT_STRUCTURAL_TEMPORAL: 0.006591796875}
+      FOLD-TARGET-ARCH-BGL:
+        artifact_json_sha256: 508ec30352d990ad0c4a09e60479ae5a09432170795ed3927ba7314c7813fa48
+        anchors:  # GTAT has 8191 reference windows (one ABSTAIN), the others 8192
+          SEMANTIC_LLAMA: [2.856523313179163, 4.412609282743966]
+          SEQUENCE_LLAMA_REFERENCE: [0.11546233296394348, 0.510230284929276]
+          SEQUENCE_LIGHTWEIGHT: [7.569206237792969, 12.086095809936523]
+          GTAT_STRUCTURAL_TEMPORAL: [15.643770337104797, 20.49864661693574]
+        temporal_split_exceedance: {SEMANTIC_LLAMA: 0.002685546875, SEQUENCE_LLAMA_REFERENCE: 0.005859375, SEQUENCE_LIGHTWEIGHT: 0.000732421875, GTAT_STRUCTURAL_TEMPORAL: 0.00537109375}
+    sanity: anchors reproduced and ranking preserved for all 8 expert-folds
+
+  drift_cs:  # P3.4
+    built_on: '2026-11-28'
+    storage: data/processed/adaptation/DRIFT-CS-001/<fold_id>/
+    spec_sha256: 90d148694355863ed3eb73665e9767e62ac4fe61a1e786a7f7f869ff442a6ee1  # drift-cs-v1.yaml
+    builder_sha256: e91edb0ee252aae46c55876740c664f785fc748801da3e1415c843d6cdb47c00  # src/seqlogad/adaptation/drift.py
+    reference_blocks: 64  # per fold, 512 windows each
+    folds:
+      FOLD-TARGET-ARCH-HDFS:
+        artifact_json_sha256: 5e11e8772439b0f61fd4740a94f0cce7cec083cb10d9004f443d2820f55ca021
+        thresholds: {event_jsd: 0.7046456254463873, unseen_event_rate: 0.0017777777777777779, unseen_topology_rate: 0.0}
+        source_to_target_ks: {SEMANTIC_LLAMA: 0.821141740829173, SEQUENCE_LLAMA_REFERENCE: 0.42975859065518507, SEQUENCE_LIGHTWEIGHT: 0.9086173214673323, GTAT_STRUCTURAL_TEMPORAL: 0.742458767361111}
+      FOLD-TARGET-ARCH-BGL:
+        artifact_json_sha256: 9ae8efa6d2d234af6dbb308fdc771daab1a7c0ca27d1b7c161b85779fd9921ba
+        thresholds: {event_jsd: 0.909593089121695, unseen_event_rate: 0.04782809611829945, unseen_topology_rate: 0.0}
+        source_to_target_ks: {SEMANTIC_LLAMA: 0.9542723600309985, SEQUENCE_LLAMA_REFERENCE: 0.6589342191578748, SEQUENCE_LIGHTWEIGHT: 0.9788537945518136, GTAT_STRUCTURAL_TEMPORAL: 0.9138249903391245}
+
+  findings:  # label-free; reported as preregistered, no rule changed
+    TEMPORAL_SPLIT_UNSTABLE: >-
+      6 of 8 expert-folds fall outside the [0.005, 0.02] band of the chronological split (STABLE only for GTAT on both
+      folds and SEQUENCE_LLAMA_REFERENCE on BGL). The buffer score distribution shifts within the burn-in, upward for
+      SEQUENCE_LIGHTWEIGHT on HDFS (4.47%) and downward for the other four. CAL-CS-001 keeps its rule; P3.5 must treat the
+      calibrated scale as approximate.
+    BGL_DOMINANT_PROTOTYPE: >-
+      On BGL one prototype holds about 4,600 of the 8,192 buffer windows for both Llama experts and P2.3; the BGL
+      burn-in is dominated by one repeated pattern.
+    ZERO_TOPOLOGY_THRESHOLD: >-
+      unseen_topology_rate is 0 in every reference block of both folds, so any new component, severity or location
+      in an evaluation block yields DRIFT_REVIEW.
+    LARGE_SOURCE_TO_TARGET_GAP: >-
+      The KS distance between P2.6 source scores and buffer scores is 0.43 to 0.98; descriptive only.
