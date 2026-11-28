@@ -72,6 +72,8 @@ def write_artifact(root, artifact_id, fold_id, tables, manifest):
 def load_artifact(root, artifact_id, fold_id):
     """Read an artifact's manifest after re-hashing every file it lists."""
     out = Path(root) / ADAPT_ROOT / artifact_id / fold_id
+    if not (out / "artifact.json").exists():
+        raise AdaptationError(f"{fold_id}: {artifact_id} is not built")
     manifest = json.loads((out / "artifact.json").read_text(encoding="utf-8"))
     for name, digest in manifest["files"].items():
         if sha256_file(out / name) != digest:

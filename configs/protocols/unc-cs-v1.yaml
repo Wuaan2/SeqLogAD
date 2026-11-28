@@ -1,0 +1,74 @@
+# UNC-CS-001 (P3.5) per-expert uncertainty and the UNKNOWN_REVIEW (abstain) rule. Declared on 2026-11-28, after
+# CAL-CS-001 and DRIFT-CS-001 were built and before any target evaluation record was scored. Seen before this spec:
+# the buffer status and coverage counts and the CAL-CS-001/DRIFT-CS-001 reports (all label-free); of the native
+# uncertainty values only their method strings, distinct-value counts and the first three values of each file (to
+# check the field is populated).
+# Nothing here is derived from a target label or an evaluation result.
+# Build (example outputs on the buffer): python -m seqlogad.adaptation.uncertainty build --root <data root>
+#   --repo-root . --pass-root <P3.2 buffer_pass folder>
+unc_cs:
+  id: UNC-CS-001
+  version: '1.0'
+  task: P3.5
+  status: PREREGISTERED
+  authorized_by: RESEARCHER  # project chat, 2026-11-28: "Open P3.5"
+  authorized_on: '2026-11-28'
+  roadmap_update:
+    id: P3.5-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.4-done.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.4-done.yaml
+    from_sha256: 2d6d128745826a7743c7284b4c700d805d49c8bedbb4eec4f848d0015e641a4d
+    to_sha256: cdeddd350cf559fe03e17689bfef5f7ad04e72abd89f6347d5e8c1db087dde55
+    changed_cells:
+      Task Register!K25: {before: Waiting researcher, after: In progress}
+    gate_signature_created: false
+  depends_on: [P2.5, P3.3]  # EVID-CS-001 envelopes; CAL-CS-001 calibration status
+
+  memory: configs/protocols/adapt-mem-v1.yaml
+  calibration: configs/protocols/cal-cs-v1.yaml
+  drift: configs/protocols/drift-cs-v1.yaml
+  folds: [FOLD-TARGET-ARCH-HDFS, FOLD-TARGET-ARCH-BGL]
+  experts: [SEMANTIC_LLAMA, SEQUENCE_LLAMA_REFERENCE, SEQUENCE_LIGHTWEIGHT, GTAT_STRUCTURAL_TEMPORAL]
+
+  principle: >-
+    An expert abstains only when its evidence is insufficient (missing or cropped input, or no calibrated scale),
+    never because its input is unusual. Novelty (unseen events, distance to the buffer prototypes, token-NLL
+    dispersion, disagreement between experts) rises with the anomaly signal itself, so turning it into abstention
+    would hide anomalies; it is reported, never used to abstain.
+
+  expert:  # one (fold, expert, scored unit)
+    state: [SCORED, UNKNOWN_REVIEW]
+    review_when:  # checked in this order; the first that holds is the reason
+      ABSTAIN: the envelope status is ABSTAIN; the envelope's own reason is carried as envelope_reason
+      LOW_COVERAGE: the envelope status is LOW_COVERAGE (cropped context or target); never forced to normal or anomaly
+      UNCALIBRATED: the CAL-CS-001 status of the (fold, expert) is not CALIBRATED
+    input_uncertainty: 1 - coverage  # EVID-CS-001 input coverage in [0, 1]; same for every expert
+    native_uncertainty:  # the expert's own uncertainty field, put on one scale; reported, not used to abstain
+      normalised: fraction of the expert's buffer reference values <= the value (target-normal ECDF, in [0, 1])
+      reference: the expert's burn-in buffer envelopes with status VALID or LOW_COVERAGE and a finite uncertainty,
+        read from the P3.2 buffer pass and checked against the evidence SHA-256 bound in the frozen prototypes component
+      unavailable: no reference value (GTAT_STRUCTURAL_TEMPORAL emits UNCERTAINTY_NOT_ESTIMATED_IN_PHASE2) -> null,
+        method NOT_AVAILABLE; never filled with a value
+      minimum: 1000  # fewer reference values -> NOT_AVAILABLE
+
+  window:  # one target window, joined across experts by target rank
+    state: [ASSESSABLE, UNKNOWN_REVIEW]
+    quorum: 2  # fewer than 2 SCORED experts -> UNKNOWN_REVIEW (reason QUORUM); fusion must not label such a window
+    uncertainty: mean normalised native uncertainty over the SCORED experts that have one; null if none
+    drift_state: the DRIFT-CS-001 block state is reported next to the window state and never changes it
+
+  report:  # preregistered; risk-coverage needs labels, so it runs only in the locked final evaluation (G4)
+    label_free_now: abstention rate per expert, reason and fold, and window abstention rate, on the buffer
+    final_evaluation:
+      coverage_levels: [1.0, 0.95, 0.9, 0.8]  # keep the ASSESSABLE windows with the lowest window uncertainty
+      metric: average precision of the fused score on the kept windows (risk-coverage)
+      unknown_review_views: [EXCLUDED, COUNTED_AS_ALERT, COUNTED_AS_NORMAL]  # all three are reported, none chosen
+
+  output:
+    artifact: data/processed/adaptation/UNC-CS-001/<fold>/  # artifact.json, reference, buffer_states, buffer_windows (parquet)
+    binds: [memory_key, memory.json SHA-256, CAL-CS-001 artifact SHA-256, this spec's SHA-256, builder SHA-256]
+  forbidden:
+    - reading any target label or any record outside TARGET_BURN_IN to build the reference
+    - abstaining on novelty, distance, dispersion or disagreement
+    - giving an UNKNOWN_REVIEW expert or window a normal or anomaly label
+    - changing the review conditions, the quorum or the normalisation after any evaluation score has been seen

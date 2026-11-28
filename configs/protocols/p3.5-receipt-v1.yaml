@@ -1,0 +1,46 @@
+# Completion receipt for P3.5 (UNC-CS-001). Recorded by the coding agent after the build; it signs nothing. The
+# researcher accepted the task in the project chat on 2026-11-28 ("Accept, write receipt"). The artifact lives
+# outside git under the storage path below; this file binds its hashes. Re-check:
+# seqlogad.adaptation.store.load_artifact(<root>, 'UNC-CS-001', <fold>) re-hashes every file.
+unc_receipt:
+  task: P3.5
+  accepted_by: RESEARCHER
+  accepted_on: '2026-11-28'
+  roadmap_update:
+    id: P3.5-DONE-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.5-in-progress.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.5-in-progress.yaml
+    from_sha256: cdeddd350cf559fe03e17689bfef5f7ad04e72abd89f6347d5e8c1db087dde55
+    to_sha256: bb534f32f06132549fc351441412fa989116ed45ace99f9c78e411d1a57b3f9e
+    changed_cells:
+      Task Register!K25: {before: In progress, after: Done}
+      Task Register!K26: {before: Not started, after: Waiting researcher}  # P3.6 waits for the researcher to open it
+    gate_signature_created: false
+  target_labels_read: false
+  built_on: '2026-11-28'
+  storage: data/processed/adaptation/UNC-CS-001/<fold_id>/
+  spec_sha256: ec2ad27bd642ccfbd0ac14944a676de1f1338c34e883d749e01c993666bb7ee9  # unc-cs-v1.yaml
+  builder_sha256: 8b5c5298271ce176456a32bafb5b831fa68b6d6ce56d9b9ec5aa5e1eaf7aafd0  # src/seqlogad/adaptation/uncertainty.py
+  quorum: 2
+  folds:
+    FOLD-TARGET-ARCH-HDFS:
+      artifact_json_sha256: 94558040c8b5e230bfaf80d4bb0e9e4975fd39d8421e583542bcb801cf6adce9
+      calibration_sha256: e02f1723643e4eaff3139f858dd2572821f699c6214665cd718ec3d129f1febe  # CAL-CS-001 artifact.json
+      unknown_review: {SEMANTIC_LLAMA: {}, SEQUENCE_LLAMA_REFERENCE: {}, SEQUENCE_LIGHTWEIGHT: {}, GTAT_STRUCTURAL_TEMPORAL: {}}
+      buffer_windows: {windows: 8192, unknown_review: 0}
+    FOLD-TARGET-ARCH-BGL:
+      artifact_json_sha256: fde2eacb7568a8497c2e66bec95f374827c407166cd6e2099fbe92c559735cf1
+      calibration_sha256: 508ec30352d990ad0c4a09e60479ae5a09432170795ed3927ba7314c7813fa48
+      unknown_review: {SEMANTIC_LLAMA: {}, SEQUENCE_LLAMA_REFERENCE: {LOW_COVERAGE: 19}, SEQUENCE_LIGHTWEIGHT: {LOW_COVERAGE: 19}, GTAT_STRUCTURAL_TEMPORAL: {ABSTAIN: 1}}
+      buffer_windows: {windows: 8192, unknown_review: 0}
+  native_uncertainty:  # 8192 reference values per fold for the three experts that emit one
+    AVAILABLE: [SEMANTIC_LLAMA, SEQUENCE_LLAMA_REFERENCE, SEQUENCE_LIGHTWEIGHT]
+    NOT_AVAILABLE: [GTAT_STRUCTURAL_TEMPORAL]  # UNCERTAINTY_NOT_ESTIMATED_IN_PHASE2
+  findings:  # label-free; reported as preregistered, no rule changed
+    COARSE_NATIVE_UNCERTAINTY: >-
+      The native uncertainty values are heavily tied (for example the HDFS SEMANTIC_LLAMA 90th and 99th percentiles
+      are both 5.20, and the BGL SEQUENCE_LLAMA_REFERENCE median and 90th percentile are both 0.28), so the normalised
+      values take few distinct levels. They are reported only and never decide an abstention.
+    NO_QUORUM_FAILURE_ON_THE_BUFFER: >-
+      No buffer window has fewer than two SCORED experts on either fold; buffer abstention comes only from the 19
+      cropped BGL windows of P2.2 and P2.3 and one GTAT ABSTAIN.

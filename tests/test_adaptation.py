@@ -6,8 +6,9 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 import pytest
+import yaml
 
-from seqlogad.adaptation import calibration, drift
+from seqlogad.adaptation import calibration, drift, uncertainty
 from seqlogad.adaptation.store import ADAPT_ROOT, AdaptationError, load_artifact
 from seqlogad.memory.build import memory_key, write_component
 from seqlogad.memory.prototypes import freeze_memory
@@ -17,6 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 FOLD, ARCH = "FOLD-TARGET-ARCH-BGL", "ARCH-BGL"
 EXPERTS = ["SEMANTIC_LLAMA", "SEQUENCE_LLAMA_REFERENCE", "SEQUENCE_LIGHTWEIGHT", "GTAT_STRUCTURAL_TEMPORAL"]
 CAL_SPEC, DRIFT_SPEC = calibration.load_spec(ROOT), drift.load_spec(ROOT)
+UNC_SPEC = uncertainty.load_spec(ROOT)
+UNC_RECEIPT = yaml.safe_load((ROOT / "configs/protocols/p3.5-receipt-v1.yaml").read_text(encoding="utf-8"))["unc_receipt"]
+RECEIPT = yaml.safe_load(
+    (ROOT / "configs/protocols/p3.2-p3.4-receipt-v1.yaml").read_text(encoding="utf-8"))["adaptation_receipt"]
 
 
 def _manifest():
@@ -24,7 +29,7 @@ def _manifest():
             "buffer_membership_sha256": "ab", "memory_key": memory_key(ARCH, "ab"), "partition": "TARGET_BURN_IN"}
 
 
-def _memory(root, windows=64, scores_per_expert=1200, freeze=True):
+def _memory(root, windows=64, scores_per_expert=1200, freeze=True, pass_receipts=None):
     """A tiny fold memory in the ADAPT-MEM-001 layout: 8-record windows over messages m0..m9."""
     ranks = list(range(windows + 8))
     message = {r: f"m{r % 10}" for r in ranks}
@@ -52,7 +57,8 @@ def _memory(root, windows=64, scores_per_expert=1200, freeze=True):
         "expert_id": [e for e in EXPERTS for _ in range(n)],
         "target_record_id": [f"{ARCH}:{r}" for _ in EXPERTS for r in range(n)],
         "score_raw": rng.normal(size=len(EXPERTS) * n).tolist(),
-        "status": ["VALID"] * (len(EXPERTS) * n)})
+        "status": ["VALID"] * (len(EXPERTS) * n), "coverage": [1.0] * (len(EXPERTS) * n)})
+    rows = rows.with_columns(pl.col("target_record_id").alias("unit_id"))
     rows = rows.with_columns(  # two ABSTAIN rows per expert, with no score
         pl.when(pl.col("target_record_id").is_in([f"{ARCH}:0", f"{ARCH}:1"])).then(pl.lit("ABSTAIN"))
         .otherwise(pl.col("status")).alias("status"),
@@ -62,7 +68,8 @@ def _memory(root, windows=64, scores_per_expert=1200, freeze=True):
     write_component(root, FOLD, "prototypes", {
         "centroids": pl.DataFrame({"expert_id": EXPERTS, "cluster": [0] * 4}),
         "assignments": pl.DataFrame({"expert_id": [e for e in EXPERTS for _ in range(10)],
-                                     "cosine_distance": [i / 10 for _ in EXPERTS for i in range(10)]})}, _manifest())
+                                     "cosine_distance": [i / 10 for _ in EXPERTS for i in range(10)]})},
+        dict(_manifest(), pass_receipts=pass_receipts or {}))
     if freeze:
         freeze_memory(root, FOLD)
 
@@ -86,7 +93,7 @@ def test_p3_3_p3_4_status_update_has_exact_provenance():
 
     update = CAL_SPEC["roadmap_update"]
     p32 = yaml.safe_load((ROOT / "configs/protocols/adapt-mem-v1.yaml").read_text(encoding="utf-8"))["adapt_mem"]
-    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / RECEIPT["roadmap_update"]["previous_workbook"]
     assert sha256_file(before_path) == update["from_sha256"] == p32["roadmap_update"]["to_sha256"]
     assert sha256_file(after_path) == update["to_sha256"]
     books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
@@ -97,6 +104,33 @@ def test_p3_3_p3_4_status_update_has_exact_provenance():
     assert changed == update["changed_cells"] and update["gate_signature_created"] is False
     for sheet in books[0]:
         assert str(sheet.data_validations) == str(books[1][sheet.title].data_validations)
+
+
+def test_p3_2_p3_4_receipt_has_exact_provenance_and_binds_the_current_rules():
+    import openpyxl
+
+    from seqlogad.common.checksum import sha256_file
+
+    update = RECEIPT["roadmap_update"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / UNC_SPEC["roadmap_update"]["previous_workbook"]
+    assert sha256_file(before_path) == update["from_sha256"] == CAL_SPEC["roadmap_update"]["to_sha256"]
+    assert sha256_file(after_path) == update["to_sha256"]
+    books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
+    before, after = [{f"{s.title}!{c.coordinate}": c.value for s in b for row in s for c in row if c.value is not None}
+                     for b in books]
+    changed = {k: {"before": before.get(k), "after": after.get(k)}
+               for k in before.keys() | after.keys() if before.get(k) != after.get(k)}
+    assert changed == update["changed_cells"] and update["gate_signature_created"] is False
+    for sheet in books[0]:
+        assert str(sheet.data_validations) == str(books[1][sheet.title].data_validations)
+    # editing a spec or builder after the build needs a new artifact version
+    for part, spec, builder in (("adapt_mem", "configs/protocols/adapt-mem-prototypes-v1.yaml", "src/seqlogad/memory/prototypes.py"),
+                                ("cal_cs", "configs/protocols/cal-cs-v1.yaml", "src/seqlogad/adaptation/calibration.py"),
+                                ("drift_cs", "configs/protocols/drift-cs-v1.yaml", "src/seqlogad/adaptation/drift.py")):
+        assert RECEIPT[part]["spec_sha256"] == sha256_file(ROOT / spec)
+        assert RECEIPT[part]["builder_sha256"] == sha256_file(ROOT / builder)
+        assert set(RECEIPT[part]["folds"]) == set(CAL_SPEC["folds"])
+    assert RECEIPT["target_labels_read"] is False and RECEIPT["accepted_by"] == "RESEARCHER"
 
 
 # ---------------------------------------------------------------- CAL-CS-001
@@ -198,3 +232,104 @@ def test_drift_reference_leaves_each_block_out_and_is_frozen(tmp_path, monkeypat
     assert manifest["prototype_distance"][EXPERTS[0]]["n"] == 10
     with pytest.raises(AdaptationError, match="written once"):
         drift.build_drift_reference(tmp_path, ROOT, tmp_path / "evidence", [FOLD])
+
+
+# ---------------------------------------------------------------- UNC-CS-001
+
+
+def test_p3_5_is_preregistered_on_insufficient_evidence_only_with_exact_provenance():
+    import openpyxl
+
+    from seqlogad.common.checksum import sha256_file
+
+    assert UNC_SPEC["experts"] == EXPERTS and UNC_SPEC["folds"] == CAL_SPEC["folds"]
+    assert any("novelty" in rule for rule in UNC_SPEC["forbidden"]) and UNC_SPEC["authorized_by"] == "RESEARCHER"
+    update = UNC_SPEC["roadmap_update"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / UNC_RECEIPT["roadmap_update"]["previous_workbook"]
+    assert sha256_file(before_path) == update["from_sha256"] == RECEIPT["roadmap_update"]["to_sha256"]
+    assert sha256_file(after_path) == update["to_sha256"]
+    books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
+    before, after = [{f"{s.title}!{c.coordinate}": c.value for s in b for row in s for c in row if c.value is not None}
+                     for b in books]
+    changed = {k: {"before": before.get(k), "after": after.get(k)}
+               for k in before.keys() | after.keys() if before.get(k) != after.get(k)}
+    assert changed == update["changed_cells"] and update["gate_signature_created"] is False
+
+
+def test_an_expert_abstains_only_on_insufficient_evidence():
+    assert uncertainty.expert_state("ABSTAIN", "DEGENERATE_SCALE") == ("UNKNOWN_REVIEW", "ABSTAIN")
+    assert uncertainty.expert_state("LOW_COVERAGE", "CALIBRATED") == ("UNKNOWN_REVIEW", "LOW_COVERAGE")
+    assert uncertainty.expert_state("VALID", "INSUFFICIENT_REFERENCE") == ("UNKNOWN_REVIEW", "UNCALIBRATED")
+    assert uncertainty.expert_state("VALID", "CALIBRATED") == ("SCORED", None)
+    assert uncertainty.normalise([1, 2, 2, 3], [0, 2, 3.5, None, float("nan")]) == [0.0, 0.75, 1.0, None, None]
+    assert uncertainty.normalise(None, [1.0]) == [None]
+
+
+def test_a_window_needs_two_scored_experts():
+    states = pl.DataFrame({"target_rank": [1, 1, 1, 2, 2],
+                           "expert_state": ["SCORED", "SCORED", "UNKNOWN_REVIEW", "SCORED", "UNKNOWN_REVIEW"],
+                           "native_uncertainty": [0.2, None, 0.9, 0.5, 0.1]})
+    windows = uncertainty.window_states(states, UNC_SPEC["window"]["quorum"])
+    assert windows.rows() == [(1, 2, 0.2, "ASSESSABLE", None), (2, 1, 0.5, "UNKNOWN_REVIEW", "QUORUM")]
+
+
+def test_risk_coverage_drops_the_most_uncertain_windows_first():
+    labels, scores = [1, 0, 1, 0], [0.9, 0.8, 0.1, 0.2]
+    result = uncertainty.risk_coverage(labels, scores, [0.1, 0.2, 0.9, None], [1.0, 0.5])
+    assert result["0.5"] == 1.0 and result["1.0"] < 1.0  # the low-scored positive is the most uncertain kept one
+
+
+def test_uncertainty_reads_the_bound_buffer_pass_and_is_written_once(tmp_path):
+    from seqlogad.common.checksum import sha256_file
+
+    folder = tmp_path / "pass" / FOLD
+    folder.mkdir(parents=True)
+    for expert in EXPERTS:
+        native = expert != "GTAT_STRUCTURAL_TEMPORAL"
+        lines = [json.dumps({"unit_id": f"{ARCH}:{r}", "uncertainty": float(r) if native else None,
+                             "reason": "NO_CONTEXT_RECORD" if r < 2 else None,
+                             "uncertainty_method": "DISPERSION" if native else "UNCERTAINTY_NOT_ESTIMATED_IN_PHASE2"})
+                 for r in range(1200)]
+        (folder / f"{expert}.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    receipts = {e: {"evidence_sha256": sha256_file(folder / f"{e}.jsonl")} for e in EXPERTS}
+    _memory(tmp_path, pass_receipts=receipts)
+    with pytest.raises(AdaptationError, match="not built"):
+        uncertainty.build_uncertainty(tmp_path, ROOT, tmp_path / "pass", [FOLD])
+    calibration.build_calibration(tmp_path, ROOT, [FOLD])
+    report = uncertainty.build_uncertainty(tmp_path, ROOT, tmp_path / "pass", [FOLD])
+    experts = report[FOLD]["experts"]
+    assert experts["GTAT_STRUCTURAL_TEMPORAL"]["native_uncertainty"] == "NOT_AVAILABLE"
+    assert experts["SEMANTIC_LLAMA"]["native_uncertainty"] == "AVAILABLE"
+    assert all(e["unknown_review"] == {"ABSTAIN": 2} for e in experts.values())
+    assert report[FOLD]["buffer_windows"] == {"windows": 1200, "unknown_review": 2}  # all four abstain on ranks 0, 1
+    manifest = load_artifact(tmp_path, "UNC-CS-001", FOLD)
+    assert manifest["target_labels_read"] is False and manifest["quorum"] == 2
+    with pytest.raises(AdaptationError, match="written once"):
+        uncertainty.build_uncertainty(tmp_path, ROOT, tmp_path / "pass", [FOLD])
+    (folder / "SEMANTIC_LLAMA.jsonl").write_text("{}\n", encoding="utf-8")
+    with pytest.raises(AdaptationError, match="binds"):
+        uncertainty._pass_uncertainty(tmp_path / "pass", FOLD, "SEMANTIC_LLAMA", receipts["SEMANTIC_LLAMA"]["evidence_sha256"])
+
+
+def test_p3_5_receipt_has_exact_provenance_and_binds_the_current_rule():
+    import openpyxl
+
+    from seqlogad.common.checksum import sha256_file
+
+    update = UNC_RECEIPT["roadmap_update"]
+    before_path, after_path = ROOT / update["previous_workbook"], ROOT / "Bang_ke_hoach_SeqLogAD.xlsx"
+    assert sha256_file(before_path) == update["from_sha256"] == UNC_SPEC["roadmap_update"]["to_sha256"]
+    assert sha256_file(after_path) == update["to_sha256"]
+    books = [openpyxl.load_workbook(p) for p in (before_path, after_path)]
+    before, after = [{f"{s.title}!{c.coordinate}": c.value for s in b for row in s for c in row if c.value is not None}
+                     for b in books]
+    changed = {k: {"before": before.get(k), "after": after.get(k)}
+               for k in before.keys() | after.keys() if before.get(k) != after.get(k)}
+    assert changed == update["changed_cells"] and update["gate_signature_created"] is False
+    for sheet in books[0]:
+        assert str(sheet.data_validations) == str(books[1][sheet.title].data_validations)
+    # editing the spec or the builder after the build needs a new artifact version
+    assert UNC_RECEIPT["spec_sha256"] == UNC_SPEC["sha256"]
+    assert UNC_RECEIPT["builder_sha256"] == sha256_file(ROOT / "src/seqlogad/adaptation/uncertainty.py")
+    assert set(UNC_RECEIPT["folds"]) == set(UNC_SPEC["folds"]) and UNC_RECEIPT["quorum"] == UNC_SPEC["window"]["quorum"]
+    assert UNC_RECEIPT["target_labels_read"] is False and UNC_RECEIPT["accepted_by"] == "RESEARCHER"
