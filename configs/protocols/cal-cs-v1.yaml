@@ -1,0 +1,61 @@
+# CAL-CS-001 (P3.3) target-normal calibration of the expert scores. Declared on 2026-11-27, before the P3.2 GPU
+# buffer pass for P2.1-P2.3 has run; the local GTAT buffer scores exist on disk but their distribution has not been
+# summarised or inspected. Nothing here is derived from a target label, a target evaluation record or a score.
+# Build (after every fold memory is frozen): python -m seqlogad.adaptation.calibration build --root <data root> --repo-root .
+cal_cs:
+  id: CAL-CS-001
+  version: '1.0'
+  task: P3.3
+  status: PREREGISTERED
+  authorized_by: RESEARCHER  # project chat, 2026-11-27: open P3.3 and P3.4 to preregister them while P3.2 waits for the GPU
+  authorized_on: '2026-11-27'
+  roadmap_update:  # one update opens both P3.3 and P3.4; DRIFT-CS-001 points here
+    id: P3.3-P3.4-STATUS-001
+    previous_workbook: docs/history/Bang_ke_hoach_SeqLogAD--P3.2-in-progress.xlsx
+    previous_projection: docs/history/excel-roadmap--P3.2-in-progress.yaml
+    from_sha256: 92c5a91a5c068b02b59aaa84ce7d74056f15d031b18770014261079216a27d37
+    to_sha256: 3b03bab3b3a4fad81911c13d155a7ce35370ae1ac39eb0869a5a5298a9979a95
+    changed_cells:
+      Task Register!K23: {before: Not started, after: In progress}
+      Task Register!K24: {before: Not started, after: In progress}
+    gate_signature_created: false
+  depends_on: P3.2  # runs only on a FROZEN fold memory (memory.json); until then only this spec and its code exist
+
+  memory: configs/protocols/adapt-mem-v1.yaml  # ADAPT-MEM-001; buffer_scores/scores.parquet of each fold
+  folds: [FOLD-TARGET-ARCH-HDFS, FOLD-TARGET-ARCH-BGL]  # EXC-007
+  experts: [SEMANTIC_LLAMA, SEQUENCE_LLAMA_REFERENCE, SEQUENCE_LIGHTWEIGHT, GTAT_STRUCTURAL_TEMPORAL]  # all four, none chosen by result
+
+  reference:  # one per fold and expert
+    rows: buffer_scores rows of the expert with status VALID or LOW_COVERAGE and a finite score_raw
+    abstain: counted and left out; never filled with a value
+    minimum: 1000  # fewer reference windows -> INSUFFICIENT_REFERENCE, no calibrated score
+  rule:
+    name: TARGET_NORMAL_QUANTILE_SCALING
+    anchors: {low: 0.5, high: 0.99}
+    quantile_method: linear  # numpy default (Hyndman-Fan type 7)
+    formula: score_calibrated = (score_raw - q_low) / (q_high - q_low)
+    meaning: 0 is the median buffer window and 1 the buffer 99th percentile, for every expert and fold
+    why: strictly increasing, so each expert's ranking is unchanged and no score saturates; the 99th percentile still
+      has about 82 buffer windows above it, so it is stable, unlike the 99.9th (about 8)
+    degenerate: q_high <= q_low -> DEGENERATE_SCALE, no calibrated score; no other anchor is tried
+    tail_p_value: "p = (1 + count(reference >= score_raw)) / (n + 1)"  # reported next to the calibrated score, never replaces it
+    abstain: an ABSTAIN stays ABSTAIN with no calibrated score
+    envelopes: not rewritten here; consumers apply the frozen table (EVID-CS-001 keeps its Phase-2 fields)
+  quantile_grid: [0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99, 0.995, 0.999]
+  sanity:  # label-free; reported, never used to change the rule
+    anchors_reproduced: calibrated reference median is 0 and 99th percentile is 1
+    rank_preserved: calibrated reference scores keep the raw order
+    temporal_split: anchors fitted on the chronologically first half of the reference windows (target rank); share of
+      the second half above that q_high; STABLE inside temporal_split_band, otherwise UNSTABLE
+    temporal_split_band: [0.005, 0.02]
+    histogram_edges: [-1, -0.5, 0, 0.25, 0.5, 0.75, 1, 2, 4]  # counts of calibrated reference scores, in place of plots
+  output:
+    artifact: data/processed/adaptation/CAL-CS-001/<fold>/  # artifact.json + reference.parquet, written once, read-only
+    binds: [memory_key, memory.json SHA-256, this spec's SHA-256, builder SHA-256]
+  assumption: the burn-in buffer is mostly normal; it is unlabeled, so a small share of anomalies cannot be ruled out
+    and would raise q_high slightly (conservative)
+  forbidden:
+    - reading any target label or any record outside TARGET_BURN_IN
+    - changing the anchors, the formula or the reference after any buffer or evaluation score has been seen
+    - a different rule per expert or per fold
+    - choosing a threshold with labels, or recalibrating on evaluation records (a new calibration is a new version)

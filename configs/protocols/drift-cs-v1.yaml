@@ -1,0 +1,56 @@
+# DRIFT-CS-001 (P3.4) domain drift, buffer coverage and GTAT topology coverage. Declared on 2026-11-27 together with
+# CAL-CS-001, before the P3.2 GPU buffer pass has run. The reference is the frozen ADAPT-MEM-001 fold memory; it is
+# never refitted on evaluation records. Nothing here is derived from a target label or an evaluation result.
+# Build the reference (after every fold memory is frozen):
+#   python -m seqlogad.adaptation.drift build --root <data root> --repo-root . --source-evidence <P2.6 evidence folder>
+drift_cs:
+  id: DRIFT-CS-001
+  version: '1.0'
+  task: P3.4
+  status: PREREGISTERED
+  authorized_by: RESEARCHER  # project chat, 2026-11-27, with P3.3
+  authorized_on: '2026-11-27'
+  roadmap_update: configs/protocols/cal-cs-v1.yaml#cal_cs.roadmap_update  # P3.3-P3.4-STATUS-001
+  depends_on: P3.2
+
+  memory: configs/protocols/adapt-mem-v1.yaml
+  folds: [FOLD-TARGET-ARCH-HDFS, FOLD-TARGET-ARCH-BGL]
+  topology_fields: [component_text, severity, location]  # request_group is an identifier, not a topology attribute
+
+  window_coverage:  # per scored window of any partition; features for P3.5, never a label
+    event_coverage: share of the window's records whose norm_h is in statistics/unigrams
+    transition_coverage: share of the window's consecutive record pairs (prev_h, next_h) in statistics/transitions; none for a one-record window
+    topology_coverage: share of the window graph's node attribute values (topology_fields) in statistics/node_attributes
+    prototype_distance_p: "per expert, (1 + count(buffer cosine distance >= d)) / (n + 1), d = cosine distance of the
+      L2-normalised window embedding to its nearest buffer prototype (prototypes/centroids, assignments)"
+
+  block_drift:  # online and causal
+    block: 512  # consecutive scored windows in target-rank order; the 32,768 statistics windows give 64 reference blocks
+    evaluated_when: the block's last window has arrived; a trailing partial block is reported, not evaluated
+    statistics:
+      event_jsd: Jensen-Shannon divergence (base 2) between the block's target-event distribution and the buffer unigram
+        distribution; events absent from the reference are pooled in one UNSEEN bin
+      unseen_event_rate: share of the block's distinct records whose norm_h is absent from the reference unigrams
+      unseen_topology_rate: share of the block's distinct graph-node attribute values (topology_fields) absent from the reference
+    reference_blocks: the 64 chronological blocks of the statistics windows, each scored against the buffer with that
+      block's own records left out (leave-block-out)
+    threshold: MAX_OF_REFERENCE_BLOCKS  # per statistic
+    state: DRIFT_REVIEW if any statistic exceeds its threshold, else IN_REFERENCE
+    on_drift: the state is an output for review; CAL-CS-001, the memory and the thresholds stay unchanged; any
+      recalibration is a new versioned artifact approved by the researcher
+
+  source_to_target_gap:  # descriptive, once per fold and expert; never a threshold
+    source: P2.6 DIV-P2-001 evidence of the fold (every source window with a score; no label is read)
+    target: the expert's buffer_scores rows with status VALID or LOW_COVERAGE
+    ks_distance: two-sample Kolmogorov-Smirnov D
+    median_shift: (median target - median source) / (q99 source - median source)
+
+  output:
+    artifact: data/processed/adaptation/DRIFT-CS-001/<fold>/  # artifact.json + blocks.parquet, written once, read-only
+    binds: [memory_key, memory.json SHA-256, this spec's SHA-256, builder SHA-256]
+  limitation: leave-block-out removes the block's own window records only, so a rare event elsewhere in the buffer at
+    that time stays in the reference; this lowers the thresholds slightly (more reviews, never fewer)
+  forbidden:
+    - reading any target label or any record outside TARGET_BURN_IN to build the reference
+    - changing the block size, the statistics or the threshold rule after any buffer or evaluation score has been seen
+    - recalibrating, refitting the reference or moving a threshold when DRIFT_REVIEW is emitted
